@@ -45,39 +45,52 @@ function applyPageMetadata(pathname = '/') {
     document.body.className = '';
     document.body.removeAttribute('style');
 
+    const savedTheme = localStorage.getItem('campusmart_theme');
+    if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+
     if (path.includes('admin')) {
         document.title = 'Admin Portal - CampusMart';
-        document.body.className = 'bg-surface';
+        document.body.className = 'bg-background';
     } else if (path.includes('product-detail')) {
         document.title = 'Product Details - CampusMart';
-        document.body.className = 'bg-surface';
+        document.body.className = 'bg-background';
     } else if (path.includes('products')) {
         document.title = 'Browse Products - CampusMart';
-        document.body.className = 'bg-surface';
+        document.body.className = 'bg-background';
     } else if (path.includes('create-listing')) {
         document.title = 'Post a Listing - CampusMart';
-        document.body.className = 'bg-surface';
+        document.body.className = 'bg-background';
     } else if (path.includes('my-listings')) {
         document.title = 'My Listings - CampusMart';
-        document.body.className = 'bg-surface';
+        document.body.className = 'bg-background';
     } else if (path.includes('favorites')) {
         document.title = 'Favorites - CampusMart';
-        document.body.className = 'bg-surface';
+        document.body.className = 'bg-background';
     } else if (path.includes('offers')) {
         document.title = 'Offers & Deals - CampusMart';
+        document.body.className = 'bg-background';
     } else if (path.includes('chat')) {
         document.title = 'Campus Messages - CampusMart';
-        document.body.style.background = '#F1F5F9';
+        document.body.className = 'bg-background';
         document.body.style.overflow = 'hidden';
     } else if (path.includes('profile')) {
         document.title = 'My Profile - CampusMart';
-        document.body.className = 'bg-surface';
+        document.body.className = 'bg-background';
     } else if (path.includes('login')) {
         document.title = 'Login - CampusMart';
+        document.body.className = 'bg-background';
     } else if (path.includes('register')) {
         document.title = 'Register - CampusMart';
+        document.body.className = 'bg-background';
     } else {
         document.title = 'CampusMart - Student Marketplace';
+        document.body.className = 'bg-background';
     }
 }
 

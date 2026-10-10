@@ -8,7 +8,7 @@ export default function ProductDetailPage() {
             <div className="container product-detail pt-24 mb-5">
                 <a href="/products.html" className="btn btn-ghost mb-3"><i className="fas fa-arrow-left"></i> Back to Browse</a>
 
-                <div className="grid grid-cols-[1fr_400px] gap-12">
+                <div className="product-detail-layout-grid">
                     {/* Gallery Left: Photo Slider */}
                     <div>
                         <div className="product-slider-container">
@@ -46,7 +46,7 @@ export default function ProductDetailPage() {
                             {/* Quick Facts & Specs Grid */}
                             <div className="item-highlights-grid">
                                 <div className="item-highlight-box">
-                                    <div className="item-highlight-icon bg-indigo-50 text-primary">
+                                    <div className="item-highlight-icon">
                                         <i className="fas fa-map-marker-alt"></i>
                                     </div>
                                     <div>
@@ -56,7 +56,7 @@ export default function ProductDetailPage() {
                                 </div>
 
                                 <div className="item-highlight-box">
-                                    <div className="item-highlight-icon bg-emerald-50 text-emerald-600">
+                                    <div className="item-highlight-icon">
                                         <i className="fas fa-shield-alt"></i>
                                     </div>
                                     <div>
@@ -66,7 +66,7 @@ export default function ProductDetailPage() {
                                 </div>
 
                                 <div className="item-highlight-box">
-                                    <div className="item-highlight-icon bg-amber-50 text-amber-700">
+                                    <div className="item-highlight-icon">
                                         <i className="fas fa-handshake"></i>
                                     </div>
                                     <div>
@@ -76,7 +76,7 @@ export default function ProductDetailPage() {
                                 </div>
 
                                 <div className="item-highlight-box">
-                                    <div className="item-highlight-icon bg-blue-50 text-blue-600">
+                                    <div className="item-highlight-icon">
                                         <i className="fas fa-user-graduate"></i>
                                     </div>
                                     <div>
@@ -135,11 +135,11 @@ export default function ProductDetailPage() {
                                 <span>Campus Verified Seller • Meet safely in hostel or library</span>
                             </div>
 
-                            <div className="mt-3 flex justify-center items-center gap-2">
+                            <div className="mt-3 flex justify-center items-center gap-2 flex-wrap">
                                 <button type="button" className="btn btn-ghost btn-sm text-secondary !text-[0.78rem] !py-1.5 !px-3 !gap-1.5 !rounded-sm whitespace-nowrap" id="btn-open-report">
                                     <i className="fas fa-flag text-danger"></i> Report this listing
                                 </button>
-                                <button type="button" className="btn btn-sm !text-[0.78rem] !py-1.5 !px-3 !gap-1.5 !rounded-sm !bg-red-50 !text-red-600 !border !border-red-200 !font-semibold whitespace-nowrap hover:!bg-red-600 hover:!text-white" id="btn-admin-delete-listing" style={{ display: 'none' }}>
+                                <button type="button" className="btn btn-sm !text-[0.78rem] !py-1.5 !px-3 !gap-1.5 !rounded-sm !bg-red-500/10 !text-red-500 !border !border-red-500/25 !font-semibold whitespace-nowrap hover:!bg-red-600 hover:!text-white" id="btn-admin-delete-listing" style={{ display: 'none' }}>
                                     <i className="fas fa-trash-alt"></i> Delete this listing
                                 </button>
                             </div>
@@ -152,7 +152,7 @@ export default function ProductDetailPage() {
                             </div>
 
                             <div className="seller-card-header">
-                                <img id="seller-avatar" src="https://ui-avatars.com/api/?name=Student&background=4F46E5&color=fff" className="seller-avatar-img" alt="Seller" />
+                                <img id="seller-avatar" src="https://ui-avatars.com/api/?name=Student&background=27272A&color=fff" className="seller-avatar-img" alt="Seller" />
                                 <div className="seller-info-col">
                                     <div className="seller-name-row">
                                         <span className="seller-name" id="seller-name">Student Seller</span>
@@ -226,7 +226,7 @@ export default function ProductDetailPage() {
             <div className="modal-overlay" id="modal-offer">
                 <div className="modal !max-w-[480px] !rounded-xl">
                     <div className="modal-header">
-                        <h3 className="!text-xl !font-extrabold flex items-center gap-2 text-slate-900">
+                        <h3 className="!text-xl !font-extrabold flex items-center gap-2">
                             <i className="fas fa-handshake text-primary"></i> Make an Offer
                         </h3>
                         <button type="button" className="modal-close" onClick={() => window.closeModal && window.closeModal('modal-offer')}><i className="fas fa-times"></i></button>
@@ -236,7 +236,7 @@ export default function ProductDetailPage() {
                         <div className="bg-background border border-border rounded-md p-4 mb-5 flex justify-between items-center">
                             <div>
                                 <div className="text-xs text-secondary font-bold uppercase">Listed Item</div>
-                                <div id="modal-offer-product-title" className="font-bold text-slate-900 text-[0.95rem] max-w-[260px] truncate">Product</div>
+                                <div id="modal-offer-product-title" className="font-bold text-[0.95rem] max-w-[260px] truncate">Product</div>
                             </div>
                             <div className="text-right">
                                 <div className="text-xs text-secondary font-bold uppercase">Campus Price</div>

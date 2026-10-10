@@ -116,7 +116,7 @@ function renderAdminUsersPage(page) {
         const isSelf = currentUser && (currentUser._id === u._id || currentUser.email === u.email);
         const avatarUrl = u.profileImage && u.profileImage.includes('http') 
             ? u.profileImage 
-            : `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=EEF2FF&color=4F46E5&bold=true`;
+            : `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=27272A&color=fff&bold=true`;
 
         const actionHtml = isSelf
             ? `<span class="badge badge-success text-xs" style="padding: 0.35rem 0.65rem; white-space: nowrap;"><i class="fas fa-check-circle"></i> You</span>`
@@ -129,22 +129,22 @@ function renderAdminUsersPage(page) {
             : (u.college || 'Campus Student');
 
         return `
-            <div class="student-row animate-fade-in" style="display: flex; align-items: center; justify-content: space-between; padding: 0.95rem 1.25rem; border-bottom: 1px solid #F1F5F9; transition: background 0.15s ease;">
+            <div class="student-row animate-fade-in" style="display: flex; align-items: center; justify-content: space-between; padding: 0.95rem 1.25rem; border-bottom: 1px solid var(--border); transition: background 0.15s ease;">
                 <!-- Student Profile & Department Info -->
                 <div style="display: flex; align-items: center; gap: 0.85rem; min-width: 0; flex: 1; padding-right: 1rem;">
                     <img src="${avatarUrl}" class="user-avatar-circle" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" alt="${escapeHtml(u.name)}">
                     <div style="min-width: 0; flex: 1;">
                         <div style="display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap;">
-                            <a href="/profile.html?id=${u._id}" style="font-weight: 700; font-size: 0.92rem; color: var(--primary); text-decoration: none;">
+                            <a href="/profile.html?id=${u._id}" style="font-weight: 700; font-size: 0.92rem; color: var(--text-primary); text-decoration: none;">
                                 ${escapeHtml(u.name)}
                             </a>
                             ${u.role === 'admin' ? '<span class="badge badge-danger text-xs" style="padding: 1px 5px; font-size: 0.62rem; font-weight: 800; line-height: 1.2;">ADMIN</span>' : ''}
-                            <span style="font-size: 0.73rem; color: #94A3B8;">• Joined ${formatDate(u.createdAt || new Date())}</span>
+                            <span style="font-size: 0.73rem; color: var(--text-secondary);">• Joined ${formatDate(u.createdAt || new Date())}</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.78rem; color: #64748B; margin-top: 0.25rem; flex-wrap: wrap;">
-                            <span class="font-mono text-primary" style="font-size: 0.75rem;"><i class="far fa-envelope" style="margin-right: 3px; opacity: 0.8;"></i>${escapeHtml(u.email)}</span>
-                            <span style="color: #CBD5E1;">•</span>
-                            <span style="color: #475569;"><i class="fas fa-graduation-cap" style="margin-right: 3px; opacity: 0.8;"></i>${escapeHtml(deptInfo)}</span>
+                        <div style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.25rem; flex-wrap: wrap;">
+                            <span class="font-mono" style="font-size: 0.75rem; color: var(--text-primary);"><i class="far fa-envelope" style="margin-right: 3px; opacity: 0.8;"></i>${escapeHtml(u.email)}</span>
+                            <span style="color: var(--border);">•</span>
+                            <span style="color: var(--text-secondary);"><i class="fas fa-graduation-cap" style="margin-right: 3px; opacity: 0.8;"></i>${escapeHtml(deptInfo)}</span>
                         </div>
                     </div>
                 </div>
@@ -171,35 +171,35 @@ function renderAdminPaginationControls(container, startIndex, endIndex, totalIte
         const isActive = p === safePage;
         pageButtonsHtml += `
             <button type="button" onclick="${pageFnName}(${p})" 
-                style="min-width: 30px; height: 30px; padding: 0 0.5rem; border-radius: 8px; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.2s; border: 1px solid ${isActive ? 'var(--primary)' : '#E2E8F0'}; background: ${isActive ? 'var(--primary)' : '#FFFFFF'}; color: ${isActive ? '#FFFFFF' : '#475569'};">
+                style="min-width: 30px; height: 30px; padding: 0 0.5rem; border-radius: 8px; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.2s; border: 1px solid ${isActive ? 'var(--text-primary)' : 'var(--border)'}; background: ${isActive ? 'var(--primary)' : 'var(--card-bg)'}; color: ${isActive ? 'var(--card-bg)' : 'var(--text-secondary)'};">
                 ${p}
             </button>
         `;
     }
 
     container.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.75rem 1.25rem; background: #F8FAFC; border-top: 1px solid #E2E8F0; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; flex-wrap: wrap;">
-            <div style="font-size: 0.78rem; color: #64748B; font-weight: 500;">
-                Showing <strong style="color: #0F172A;">${startIndex + 1}–${endIndex}</strong> of <strong style="color: #0F172A;">${totalItems}</strong>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.75rem 1.25rem; background: var(--surface); border-top: 1px solid var(--border); border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; flex-wrap: wrap;">
+            <div style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 500;">
+                Showing <strong style="color: var(--text-primary);">${startIndex + 1}–${endIndex}</strong> of <strong style="color: var(--text-primary);">${totalItems}</strong>
             </div>
 
             <div style="display: flex; align-items: center; gap: 0.65rem; flex: 1; max-width: 220px; min-width: 130px;">
-                <span style="font-size: 0.72rem; color: #64748B; white-space: nowrap; font-weight: 600;">Page ${safePage}/${totalPages}</span>
+                <span style="font-size: 0.72rem; color: var(--text-secondary); white-space: nowrap; font-weight: 600;">Page ${safePage}/${totalPages}</span>
                 <input type="range" min="1" max="${totalPages}" step="1" value="${safePage}" 
                     ${totalPages <= 1 ? 'disabled' : ''}
                     oninput="${pageFnName}(this.value)"
                     title="Slide to switch pages"
-                    style="flex: 1; accent-color: var(--primary); cursor: ${totalPages > 1 ? 'pointer' : 'default'}; height: 5px; opacity: ${totalPages > 1 ? '1' : '0.45'};">
+                    style="flex: 1; accent-color: var(--text-primary); cursor: ${totalPages > 1 ? 'pointer' : 'default'}; height: 5px; opacity: ${totalPages > 1 ? '1' : '0.45'};">
             </div>
 
             <div style="display: flex; align-items: center; gap: 0.35rem;">
                 <button type="button" onclick="${pageFnName}(${safePage - 1})" ${safePage <= 1 ? 'disabled' : ''}
-                    style="height: 30px; padding: 0 0.65rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; border: 1px solid #E2E8F0; background: #FFFFFF; color: ${safePage <= 1 ? '#CBD5E1' : '#334155'}; cursor: ${safePage <= 1 ? 'not-allowed' : 'pointer'}; display: inline-flex; align-items: center; gap: 0.25rem;">
+                    style="height: 30px; padding: 0 0.65rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; border: 1px solid var(--border); background: var(--card-bg); color: ${safePage <= 1 ? 'var(--border)' : 'var(--text-primary)'}; cursor: ${safePage <= 1 ? 'not-allowed' : 'pointer'}; display: inline-flex; align-items: center; gap: 0.25rem;">
                     <i class="fas fa-chevron-left" style="font-size: 0.65rem;"></i> Prev
                 </button>
                 ${pageButtonsHtml}
                 <button type="button" onclick="${pageFnName}(${safePage + 1})" ${safePage >= totalPages ? 'disabled' : ''}
-                    style="height: 30px; padding: 0 0.65rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; border: 1px solid #E2E8F0; background: #FFFFFF; color: ${safePage >= totalPages ? '#CBD5E1' : '#334155'}; cursor: ${safePage >= totalPages ? 'not-allowed' : 'pointer'}; display: inline-flex; align-items: center; gap: 0.25rem;">
+                    style="height: 30px; padding: 0 0.65rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; border: 1px solid var(--border); background: var(--card-bg); color: ${safePage >= totalPages ? 'var(--border)' : 'var(--text-primary)'}; cursor: ${safePage >= totalPages ? 'not-allowed' : 'pointer'}; display: inline-flex; align-items: center; gap: 0.25rem;">
                     Next <i class="fas fa-chevron-right" style="font-size: 0.65rem;"></i>
                 </button>
             </div>
@@ -378,8 +378,8 @@ async function loadAdminReports(headers) {
     if (paginationContainer) paginationContainer.innerHTML = '';
 
     reportsContainer.innerHTML = `
-        <div class="text-center py-4" style="background: white; border-radius: 12px; border: 1px dashed var(--border); padding: 2.2rem 1rem;">
-            <div style="width: 50px; height: 50px; border-radius: 50%; background: #ECFDF5; color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin: 0 auto 0.75rem;">
+        <div class="text-center py-4" style="background: var(--surface); border-radius: 12px; border: 1px dashed var(--border); padding: 2.2rem 1rem;">
+            <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(16, 185, 129, 0.12); color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin: 0 auto 0.75rem;">
                 <i class="fas fa-shield-alt"></i>
             </div>
             <div class="font-bold text-sm text-primary">All Clear!</div>
@@ -432,7 +432,7 @@ function renderAdminReportsPage(page) {
         const isLast = idx === pageReports.length - 1;
 
         return `
-        <div class="report-entry animate-fade-in-up" style="background: white; border: 1px solid #FEE2E2; border-radius: 12px; padding: 1rem; margin-bottom: ${isLast ? '0' : '0.85rem'}; box-shadow: 0 2px 6px rgba(239,68,68,0.04);">
+        <div class="report-entry animate-fade-in-up" style="background: var(--card-bg); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; padding: 1rem; margin-bottom: ${isLast ? '0' : '0.85rem'};">
             <!-- Header: Reason Badge + Date -->
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-1.5 flex-wrap">
@@ -449,22 +449,22 @@ function renderAdminReportsPage(page) {
             </div>
 
             <!-- Description Box -->
-            <div style="background: #FEF2F2; border-left: 3px solid #EF4444; border-radius: 6px; padding: 0.55rem 0.75rem; margin-bottom: 0.75rem;">
-                <p style="margin: 0; font-size: 0.85rem; color: #1E293B; line-height: 1.45; word-break: break-word;">
+            <div style="background: rgba(239, 68, 68, 0.08); border-left: 3px solid #EF4444; border-radius: 6px; padding: 0.55rem 0.75rem; margin-bottom: 0.75rem;">
+                <p style="margin: 0; font-size: 0.85rem; color: var(--text-primary); line-height: 1.45; word-break: break-word;">
                     "${escapeHtml(r.description || 'Reported by campus user.')}"
                 </p>
             </div>
 
             <!-- Reporter Info Snippet -->
-            <div class="flex items-center gap-2 mb-3" style="background: #F8FAFC; border: 1px solid #F1F5F9; border-radius: 8px; padding: 0.45rem 0.65rem;">
-                <div style="width: 26px; height: 26px; border-radius: 50%; background: #EEF2FF; color: #4F46E5; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; flex-shrink: 0;">
+            <div class="flex items-center gap-2 mb-3" style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.45rem 0.65rem;">
+                <div style="width: 26px; height: 26px; border-radius: 50%; background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; flex-shrink: 0;">
                     ${escapeHtml(reporterInitials)}
                 </div>
                 <div style="min-width: 0; flex: 1;">
-                    <div style="font-size: 0.76rem; font-weight: 600; color: #334155; line-height: 1.2;">
+                    <div style="font-size: 0.76rem; font-weight: 600; color: var(--text-primary); line-height: 1.2;">
                         ${escapeHtml(reporterName)}
                     </div>
-                    <div style="font-size: 0.7rem; color: #64748B; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    <div style="font-size: 0.7rem; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                         ${escapeHtml(reporterEmail || 'Campus Student')}
                     </div>
                 </div>

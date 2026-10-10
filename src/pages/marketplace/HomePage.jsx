@@ -21,7 +21,7 @@ export default function HomePage() {
             </header>
 
             {/* Categories Section */}
-            <section className="section bg-white reveal">
+            <section className="section bg-background reveal">
                 <div className="container">
                     <div className="section-header">
                         <h2>Explore Categories</h2>
@@ -29,23 +29,23 @@ export default function HomePage() {
                     </div>
                     <div className="categories-grid">
                         <a href="/products.html?category=books" className="category-tile cat-books stagger-1">
-                            <i className="fas fa-book category-icon"></i>
+                            <div className="category-icon"><i className="fas fa-book"></i></div>
                             <span className="category-name">Textbooks</span>
                         </a>
                         <a href="/products.html?category=electronics" className="category-tile cat-electronics stagger-2">
-                            <i className="fas fa-laptop category-icon"></i>
+                            <div className="category-icon"><i className="fas fa-laptop"></i></div>
                             <span className="category-name">Electronics</span>
                         </a>
                         <a href="/products.html?category=furniture" className="category-tile cat-furniture stagger-3">
-                            <i className="fas fa-chair category-icon"></i>
+                            <div className="category-icon"><i className="fas fa-chair"></i></div>
                             <span className="category-name">Furniture</span>
                         </a>
                         <a href="/products.html?category=clothing" className="category-tile cat-clothing stagger-4">
-                            <i className="fas fa-tshirt category-icon"></i>
+                            <div className="category-icon"><i className="fas fa-tshirt"></i></div>
                             <span className="category-name">Clothing</span>
                         </a>
                         <a href="/products.html?category=transport" className="category-tile cat-transport stagger-5">
-                            <i className="fas fa-bicycle category-icon"></i>
+                            <div className="category-icon"><i className="fas fa-bicycle"></i></div>
                             <span className="category-name">Transport</span>
                         </a>
                     </div>
@@ -53,7 +53,7 @@ export default function HomePage() {
             </section>
 
             {/* Recent Products Section */}
-            <section className="section reveal">
+            <section className="section bg-surface reveal border-y border-border">
                 <div className="container">
                     <div className="section-header">
                         <h2>Fresh Listings</h2>
@@ -66,7 +66,7 @@ export default function HomePage() {
             </section>
 
             {/* How It Works */}
-            <section className="section bg-white reveal">
+            <section className="section bg-background reveal">
                 <div className="container">
                     <div className="section-header text-center justify-center">
                         <h2>How CampusMart Works</h2>
@@ -75,7 +75,7 @@ export default function HomePage() {
                         {/* 1. Verified Students */}
                         <div className="how-it-works-card text-center" style={{ cursor: 'default', justifyContent: 'center' }}>
                             <div>
-                                <div style={{ width: '80px', height: '80px', background: '#EEF2FF', color: 'var(--primary)', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', margin: '0 auto 1.5rem', transform: 'rotate(-5deg)', boxShadow: '0 8px 20px rgba(79,70,229,0.12)' }}>
+                                <div style={{ width: '72px', height: '72px', background: 'var(--surface)', color: 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', margin: '0 auto 1.5rem' }}>
                                     <i className="fas fa-user-check"></i>
                                 </div>
                                 <h3 className="mb-2" style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Verified Students</h3>
@@ -86,7 +86,7 @@ export default function HomePage() {
                         {/* 2. List or Buy */}
                         <a href="/products.html" className="how-it-works-card text-center">
                             <div>
-                                <div style={{ width: '80px', height: '80px', background: '#EEF2FF', color: 'var(--primary)', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', margin: '0 auto 1.5rem', transform: 'rotate(5deg)', boxShadow: '0 8px 20px rgba(79,70,229,0.12)' }}>
+                                <div style={{ width: '72px', height: '72px', background: 'var(--surface)', color: 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', margin: '0 auto 1.5rem' }}>
                                     <i className="fas fa-tags"></i>
                                 </div>
                                 <h3 className="mb-2" style={{ fontWeight: 700, color: 'var(--text-primary)' }}>List or Buy</h3>
@@ -100,7 +100,7 @@ export default function HomePage() {
                         {/* 3. Chat & Meet */}
                         <a href="/chat.html" className="how-it-works-card text-center">
                             <div>
-                                <div style={{ width: '80px', height: '80px', background: '#EEF2FF', color: 'var(--primary)', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', margin: '0 auto 1.5rem', transform: 'rotate(-5deg)', boxShadow: '0 8px 20px rgba(79,70,229,0.12)' }}>
+                                <div style={{ width: '72px', height: '72px', background: 'var(--surface)', color: 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', margin: '0 auto 1.5rem' }}>
                                     <i className="fas fa-comments"></i>
                                 </div>
                                 <h3 className="mb-2" style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Chat &amp; Meet</h3>

@@ -17,7 +17,7 @@ export default function ProductsPage() {
                     </div>
                 </div>
 
-                <div className="grid" style={{ gridTemplateColumns: '280px 1fr', gap: '2rem' }}>
+                <div className="products-layout-grid">
                     {/* Filters Sidebar */}
                     <aside className="filters-sidebar">
                         <div className="flex justify-between items-center mb-3">
@@ -52,14 +52,16 @@ export default function ProductsPage() {
 
                     {/* Product Grid */}
                     <div>
-                        <div className="mb-3 flex items-center gap-2" id="active-filters">
+                        <div className="mb-3 flex items-center gap-2 flex-wrap" id="active-filters">
                             {/* Active filter pills */}
                         </div>
                         <div className="products-grid" id="main-products-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}>
                             {/* Skeletons / Products injected by JS */}
                         </div>
-                        <div className="text-center mt-5">
-                            <button id="load-more" className="btn btn-secondary">Load More</button>
+
+                        {/* Pagination */}
+                        <div className="flex justify-center mt-5 gap-1" id="pagination">
+                            {/* Page buttons */}
                         </div>
                     </div>
                 </div>

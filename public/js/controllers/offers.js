@@ -162,9 +162,9 @@ async function loadSentOffers() {
             const isCompleted = offer.status === 'completed';
 
             return `
-                <div class="card stagger-${(i % 5) + 1} animate-fade-in-up" style="border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--border); box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);">
+                <div class="card stagger-${(i % 5) + 1} animate-fade-in-up" style="border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--border);">
                     <!-- Top Item Summary -->
-                    <div style="display: flex; align-items: center; gap: 0.9rem; padding: 1rem 1.15rem; border-bottom: 1px solid var(--border); background: #ffffff;">
+                    <div style="display: flex; align-items: center; gap: 0.9rem; padding: 1rem 1.15rem; border-bottom: 1px solid var(--border); background: var(--card-bg);">
                         <img src="${imageUrl}" alt="${escapeHtml(product.title || 'Item')}" style="width: 68px; height: 68px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0;">
                         <div style="flex: 1; min-width: 0;">
                             <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
@@ -180,13 +180,13 @@ async function loadSentOffers() {
                     </div>
 
                     <!-- Card Body -->
-                    <div style="padding: 1.15rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; background: #F8FAFC;">
+                    <div style="padding: 1.15rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; background: var(--surface);">
                         <div>
                             <!-- Offer Amount + Status Row -->
-                            <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.85rem;">
+                            <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.85rem;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                                     <span class="text-xs text-secondary font-bold" style="text-transform: uppercase; letter-spacing: 0.04em;">Your Offer</span>
-                                    <span style="font-size: 1.35rem; font-weight: 800; color: #4F46E5; line-height: 1;">
+                                    <span style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); line-height: 1;">
                                         ${formatPrice(offer.amount)}
                                     </span>
                                 </div>
@@ -194,7 +194,7 @@ async function loadSentOffers() {
                             </div>
 
                             <!-- Seller Info Box -->
-                            <div style="background: #ffffff; padding: 0.75rem 0.9rem; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 0.75rem;">
+                            <div style="background: var(--card-bg); padding: 0.75rem 0.9rem; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 0.75rem;">
                                 <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; display: flex; align-items: center; gap: 0.45rem;">
                                     <i class="fas fa-store text-primary-color"></i>
                                     <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Seller: ${escapeHtml(seller.name || 'Campus Student')}</span>
@@ -208,13 +208,13 @@ async function loadSentOffers() {
                             </div>
 
                             ${offer.message ? `
-                                <div style="font-size: 0.82rem; color: #475569; background: #ffffff; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 0.75rem;">
-                                    <strong>Your Note:</strong> "${escapeHtml(offer.message)}"
+                                <div style="font-size: 0.82rem; color: var(--text-secondary); background: var(--card-bg); padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 0.75rem;">
+                                    <strong style="color: var(--text-primary);">Your Note:</strong> "${escapeHtml(offer.message)}"
                                 </div>
                             ` : ''}
 
                             ${isCountered && offer.counterMessage ? `
-                                <div style="font-size: 0.82rem; color: #92400E; background: #FEF3C7; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid #FDE68A; margin-bottom: 0.75rem;">
+                                <div style="font-size: 0.82rem; color: var(--text-primary); background: rgba(245, 158, 11, 0.1); padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid rgba(245, 158, 11, 0.3); margin-bottom: 0.75rem;">
                                     <strong>Seller's Counter Note:</strong> "${escapeHtml(offer.counterMessage)}"
                                 </div>
                             ` : ''}
@@ -223,13 +223,13 @@ async function loadSentOffers() {
                         <!-- Action Buttons based on status -->
                         <div style="margin-top: 0.5rem; padding-top: 0.85rem; border-top: 1px dashed var(--border);">
                             ${isAccepted ? `
-                                <button type="button" class="btn btn-secondary w-full justify-center mb-2" onclick="openUpiPaymentModal('${offer._id}', 'sent')" style="font-weight: 700; border-radius: 10px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);">
+                                <button type="button" class="btn btn-secondary w-full justify-center mb-2" onclick="openUpiPaymentModal('${offer._id}', 'sent')" style="font-weight: 700; border-radius: 10px;">
                                     <i class="fas fa-qrcode mr-1"></i> Pay ₹${Number(offer.amount).toLocaleString('en-IN')} via UPI
                                 </button>
                             ` : ''}
 
                             ${isCompleted ? `
-                                <div style="background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; padding: 0.55rem 0.75rem; border-radius: 8px; font-size: 0.82rem; font-weight: 700; text-align: center; margin-bottom: 0.65rem;">
+                                <div style="background: rgba(16, 185, 129, 0.1); color: var(--secondary); border: 1px solid rgba(16, 185, 129, 0.25); padding: 0.55rem 0.75rem; border-radius: 8px; font-size: 0.82rem; font-weight: 700; text-align: center; margin-bottom: 0.65rem;">
                                     <i class="fas fa-check-double mr-1"></i> Deal Completed & Payment Made
                                 </div>
                             ` : ''}
@@ -305,9 +305,9 @@ async function loadReceivedOffers() {
             const statusBadge = getStatusBadgeHTML(offer.status, offer.counterAmount);
 
             return `
-                <div class="card stagger-${(i % 5) + 1} animate-fade-in-up" style="border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--border); box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);">
+                <div class="card stagger-${(i % 5) + 1} animate-fade-in-up" style="border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--border);">
                     <!-- Top Item Summary -->
-                    <div style="display: flex; align-items: center; gap: 0.9rem; padding: 1rem 1.15rem; border-bottom: 1px solid var(--border); background: #ffffff;">
+                    <div style="display: flex; align-items: center; gap: 0.9rem; padding: 1rem 1.15rem; border-bottom: 1px solid var(--border); background: var(--card-bg);">
                         <img src="${imageUrl}" alt="${escapeHtml(product.title || 'Item')}" style="width: 68px; height: 68px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0;">
                         <div style="flex: 1; min-width: 0;">
                             <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
@@ -323,10 +323,10 @@ async function loadReceivedOffers() {
                     </div>
 
                     <!-- Card Body -->
-                    <div style="padding: 1.15rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; background: #F8FAFC;">
+                    <div style="padding: 1.15rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; background: var(--surface);">
                         <div>
                             <!-- Buyer's Bid + Status Box -->
-                            <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.85rem;">
+                            <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.85rem;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                                     <span class="text-xs text-secondary font-bold" style="text-transform: uppercase; letter-spacing: 0.04em;">Buyer's Bid</span>
                                     <span style="font-size: 1.35rem; font-weight: 800; color: #10B981; line-height: 1;">
@@ -337,7 +337,7 @@ async function loadReceivedOffers() {
                             </div>
 
                             <!-- Buyer Details Card -->
-                            <div style="background: #ffffff; padding: 0.8rem 0.95rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 0.75rem;">
+                            <div style="background: var(--card-bg); padding: 0.8rem 0.95rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 0.75rem;">
                                 <div style="font-size: 0.88rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.45rem;">
                                     <i class="fas fa-user-graduate text-primary-color" style="flex-shrink: 0;"></i>
                                     <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(buyer.name || 'Student')}</span>
@@ -347,7 +347,7 @@ async function loadReceivedOffers() {
                                     <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(buyer.phone || buyer.email || 'Campus Chat')}</span>
                                 </div>
                                 ${offer.message ? `
-                                    <div style="font-size: 0.82rem; color: #475569; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed var(--border);">
+                                    <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed var(--border);">
                                         "${escapeHtml(offer.message)}"
                                     </div>
                                 ` : ''}
@@ -728,8 +728,8 @@ function getStatusBadgeHTML(status, counterAmount) {
 
 function renderEmptySentOffers(container) {
     container.innerHTML = `
-        <div class="empty-state w-full" style="grid-column: 1 / -1; background: white; border-radius: var(--radius-xl); padding: 4rem 1.5rem; border: 1px solid var(--border); text-align: center;">
-            <div style="width: 60px; height: 60px; border-radius: 50%; background: #EEF2FF; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 1.25rem;">
+        <div class="empty-state w-full" style="grid-column: 1 / -1; background: var(--card-bg); border-radius: var(--radius-xl); padding: 4rem 1.5rem; border: 1px solid var(--border); text-align: center;">
+            <div style="width: 60px; height: 60px; border-radius: 50%; background: var(--surface); color: var(--text-primary); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 1.25rem;">
                 <i class="fas fa-paper-plane" style="line-height: 1; margin: 0;"></i>
             </div>
             <h3 style="font-size: 1.3rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">No Offers Sent Yet</h3>
@@ -746,8 +746,8 @@ function renderEmptySentOffers(container) {
 
 function renderEmptyReceivedOffers(container) {
     container.innerHTML = `
-        <div class="empty-state w-full" style="grid-column: 1 / -1; background: white; border-radius: var(--radius-xl); padding: 4rem 1.5rem; border: 1px solid var(--border); text-align: center;">
-            <div style="width: 60px; height: 60px; border-radius: 50%; background: #ECFDF5; color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 1.25rem;">
+        <div class="empty-state w-full" style="grid-column: 1 / -1; background: var(--card-bg); border-radius: var(--radius-xl); padding: 4rem 1.5rem; border: 1px solid var(--border); text-align: center;">
+            <div style="width: 60px; height: 60px; border-radius: 50%; background: var(--surface); color: #10B981; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 1.25rem;">
                 <i class="fas fa-inbox" style="line-height: 1; margin: 0;"></i>
             </div>
             <h3 style="font-size: 1.3rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">No Offers Received Yet</h3>

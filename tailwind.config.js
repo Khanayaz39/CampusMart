@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: [
     "./src/**/*.{js,jsx}",
     "./public/**/*.html",
@@ -13,22 +14,23 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#4F46E5',
-          light: '#818CF8',
-          dark: '#3730A3',
+          DEFAULT: 'rgb(var(--primary-rgb) / <alpha-value>)',
+          light: 'var(--primary-light)',
+          dark: 'var(--primary-dark)',
         },
         secondary: {
-          DEFAULT: '#10B981',
-          light: '#34D399',
-          dark: '#059669',
+          DEFAULT: 'rgb(var(--secondary-rgb) / <alpha-value>)',
+          light: 'var(--secondary-light)',
+          dark: 'var(--secondary-dark)',
         },
-        accent: '#F59E0B',
-        surface: '#F1F5F9',
+        accent: 'var(--accent)',
+        surface: 'var(--surface)',
         danger: '#EF4444',
         success: '#10B981',
         warning: '#F59E0B',
-        border: '#E2E8F0',
-        background: '#F8FAFC',
+        border: 'var(--border)',
+        background: 'var(--background)',
+        card: 'var(--card-bg)',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
@@ -41,9 +43,9 @@ module.exports = {
         '2xl': '24px',
       },
       boxShadow: {
-        card: '0 20px 60px rgba(0, 0, 0, 0.12)',
-        soft: '0 10px 30px rgba(0, 0, 0, 0.08)',
-        panel: '0 4px 20px rgba(0, 0, 0, 0.04)',
+        card: 'var(--shadow-lg)',
+        soft: 'var(--shadow-md)',
+        panel: 'var(--shadow-sm)',
       },
     },
   },

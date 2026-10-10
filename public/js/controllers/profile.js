@@ -258,7 +258,7 @@ async function loadUserProducts(user, isOwnProfile) {
     // 1. Render Available Listings
     if (availableProducts.length === 0) {
         grid.innerHTML = `
-            <div class="empty-state w-full" style="grid-column: 1 / -1; background: white; border-radius: var(--radius-lg); padding: 3rem 1.5rem; border: 1px solid var(--border);">
+            <div class="empty-state w-full" style="grid-column: 1 / -1; background: var(--card-bg); border-radius: var(--radius-lg); padding: 3rem 1.5rem; border: 1px solid var(--border);">
                 <i class="fas fa-box-open" style="font-size: 3.5rem; color: var(--primary); margin-bottom: 1rem; opacity: 0.8;"></i>
                 <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">No active listings</h3>
                 <p class="text-secondary" style="margin-bottom: 1.5rem;">
@@ -301,8 +301,8 @@ async function loadUserProducts(user, isOwnProfile) {
     if (soldGrid) {
         if (soldProducts.length === 0) {
             soldGrid.innerHTML = `
-                <div class="empty-state w-full" style="grid-column: 1 / -1; background: white; border-radius: var(--radius-lg); padding: 3rem 1.5rem; border: 1px solid var(--border);">
-                    <div style="width: 58px; height: 58px; border-radius: 50%; background: #ECFDF5; color: #059669; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 1.25rem;">
+                <div class="empty-state w-full" style="grid-column: 1 / -1; background: var(--card-bg); border-radius: var(--radius-lg); padding: 3rem 1.5rem; border: 1px solid var(--border);">
+                    <div style="width: 58px; height: 58px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 1.25rem;">
                         <i class="fas fa-handshake" style="margin: 0; line-height: 1;"></i>
                     </div>
                     <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--text-primary);">No Items Sold Yet</h3>
@@ -782,8 +782,8 @@ async function loadUserReviews(user, isOwnProfile) {
 
         if (!reviews || reviews.length === 0) {
             reviewsList.innerHTML = `
-                <div class="empty-state text-center" style="background: white; border-radius: var(--radius-lg); padding: 3.5rem 1.5rem; border: 1px solid var(--border);">
-                    <div style="width: 64px; height: 64px; border-radius: 50%; background: #FFFBEB; color: #D97706; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 1.25rem;">
+                <div class="empty-state text-center" style="background: var(--card-bg); border-radius: var(--radius-lg); padding: 3.5rem 1.5rem; border: 1px solid var(--border);">
+                    <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); color: #F59E0B; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 1.25rem;">
                         <i class="far fa-star"></i>
                     </div>
                     <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem;">No Reviews Yet</h3>

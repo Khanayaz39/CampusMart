@@ -171,7 +171,7 @@ function showOtpModal(email, devOtp = null) {
         modal.className = 'modal-overlay';
         modal.innerHTML = `
             <div class="modal animate-scale-in" style="max-width: 440px; text-align: center; border-radius: 20px; padding: 2.25rem 2rem;">
-                <div style="width: 64px; height: 64px; border-radius: 50%; background: #EEF2FF; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 1.25rem;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); color: var(--text-primary); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 1.25rem;">
                     <i class="fas fa-shield-alt"></i>
                 </div>
                 
@@ -187,7 +187,7 @@ function showOtpModal(email, devOtp = null) {
 
                 <div class="form-group" style="margin-bottom: 1.25rem;">
                     <input type="text" id="otp-code-input" maxlength="6" placeholder="------" 
-                        style="width: 220px; font-size: 2rem; font-weight: 800; letter-spacing: 0.35em; text-align: center; font-family: monospace; padding: 0.65rem 0.5rem; border: 2px solid var(--primary); border-radius: 12px; outline: none; margin: 0 auto; display: block; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);">
+                        style="width: 220px; font-size: 2rem; font-weight: 800; letter-spacing: 0.35em; text-align: center; font-family: monospace; padding: 0.65rem 0.5rem; border: 2px solid var(--primary); background: var(--surface); color: var(--text-primary); border-radius: 12px; outline: none; margin: 0 auto; display: block;">
                 </div>
 
                 <button type="button" id="btn-submit-otp" class="btn btn-primary btn-lg w-full mb-3" style="font-weight: 700;">

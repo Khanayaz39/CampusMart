@@ -1,16 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function AdminDashboardPage() {
+    const [isDark, setIsDark] = useState(() => {
+        if (typeof document !== 'undefined') {
+            return document.documentElement.classList.contains('dark');
+        }
+        return false;
+    });
+
+    useEffect(() => {
+        const syncTheme = () => setIsDark(document.documentElement.classList.contains('dark'));
+        window.addEventListener('campusmart-theme-change', syncTheme);
+        return () => window.removeEventListener('campusmart-theme-change', syncTheme);
+    }, []);
+
+    const handleThemeToggle = () => {
+        if (typeof window.toggleTheme === 'function') {
+            window.toggleTheme();
+        } else {
+            const nextDark = !document.documentElement.classList.contains('dark');
+            document.documentElement.classList.toggle('dark', nextDark);
+            localStorage.setItem('campusmart_theme', nextDark ? 'dark' : 'light');
+            setIsDark(nextDark);
+        }
+    };
+
     return (
         <>
             {/* Clean Admin Navbar */}
             <nav className="admin-navbar">
                 <div className="container flex justify-between items-center">
                     <div className="flex items-center">
-                        <a href="/" className="logo no-underline">Campus<span>Mart</span></a>
+                        <a href="/" className="logo no-underline font-extrabold text-2xl tracking-tight">Campus<span className="text-secondary font-semibold">Mart</span></a>
                         <span className="admin-badge-tag"><i className="fas fa-shield-alt"></i> Admin Portal</span>
                     </div>
                     <div className="flex items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={handleThemeToggle}
+                            className="theme-toggle-btn"
+                            title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                            aria-label="Toggle Dark Mode"
+                        >
+                            <i key={isDark ? 'sun' : 'moon'} className={isDark ? 'fas fa-sun text-amber-400' : 'fas fa-moon'}></i>
+                        </button>
                         <a href="/" className="btn btn-outline btn-sm rounded-sm">
                             <i className="fas fa-store"></i> View Marketplace
                         </a>
@@ -68,7 +101,7 @@ export default function AdminDashboardPage() {
                 </div>
 
                 {/* Middle Row: Users Directory & Safety Status */}
-                <div className="grid mb-5 grid-cols-[minmax(0,2fr)_minmax(320px,1fr)] gap-6">
+                <div className="admin-middle-grid mb-5">
                     {/* Registered Students Directory */}
                     <div className="admin-card flex flex-col justify-between">
                         <div>

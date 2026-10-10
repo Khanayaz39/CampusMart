@@ -16,14 +16,14 @@ export default function CreateListingPage() {
                     </p>
                 </div>
 
-                <form id="create-listing-form" className="grid" style={{ gridTemplateColumns: '1fr 1.35fr', gap: '1.75rem', alignItems: 'start' }}>
+                <form id="create-listing-form" className="create-listing-grid">
                     {/* Left Column: Photos & AI Tools */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                         {/* Photos Card */}
                         <div className="form-card">
                             <div className="flex justify-between items-center mb-3">
                                 <div className="flex items-center gap-2">
-                                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#EEF2FF', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}>
+                                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--surface)', color: 'var(--text-primary)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}>
                                         <i className="fas fa-camera"></i>
                                     </div>
                                     <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>Photos</h3>
@@ -48,7 +48,7 @@ export default function CreateListingPage() {
                         </div>
 
                         {/* Quick Campus Seller Tips */}
-                        <div className="form-card" style={{ background: '#F8FAFC', border: '1px solid var(--border)', padding: '1.25rem' }}>
+                        <div className="form-card" style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '1.25rem' }}>
                             <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '0.45rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                                 <i className="fas fa-lightbulb text-warning"></i> Quick Seller Tips
                             </div>
@@ -60,11 +60,11 @@ export default function CreateListingPage() {
                         </div>
 
                         {/* AI Safety & Content Moderation Badge */}
-                        <div className="form-card" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', padding: '1.15rem', borderRadius: '12px' }}>
-                            <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#166534', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                                <i className="fas fa-shield-halved" style={{ color: '#16A34A' }}></i> Campus AI Moderation Active
+                        <div className="form-card" style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.25)', padding: '1.15rem', borderRadius: '12px' }}>
+                            <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--secondary)', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                                <i className="fas fa-shield-halved"></i> Campus AI Moderation Active
                             </div>
-                            <p style={{ fontSize: '0.78rem', color: '#15803D', lineHeight: 1.5, margin: 0 }}>
+                            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
                                 Listings are automatically scanned. Adult or nude photos, contraband, vape/alcohol, and weapons are strictly blocked to protect campus safety.
                             </p>
                         </div>
@@ -146,7 +146,7 @@ export default function CreateListingPage() {
 
                         {/* Description & Quick Templates */}
                         <div className="form-group mb-4">
-                            <div className="flex justify-between items-center mb-1">
+                            <div className="flex justify-between items-center mb-1 flex-wrap gap-1">
                                 <label className="form-label mb-0" htmlFor="description">Description <span className="text-danger">*</span></label>
                                 {/* Quick Fill Templates */}
                                 <div className="quick-chip-group">
@@ -161,7 +161,7 @@ export default function CreateListingPage() {
 
                         {/* Submit Button */}
                         <div className="pt-2">
-                            <button type="submit" className="btn btn-primary btn-lg w-full justify-center" style={{ fontWeight: 700, fontSize: '1.05rem', boxShadow: '0 4px 14px rgba(79, 70, 229, 0.35)', borderRadius: '12px', height: '48px' }}>
+                            <button type="submit" className="btn btn-primary btn-lg w-full justify-center" style={{ fontWeight: 700, fontSize: '1.02rem', borderRadius: '12px', height: '48px' }}>
                                 <i className="fas fa-paper-plane mr-2"></i> Publish Campus Listing
                             </button>
                         </div>

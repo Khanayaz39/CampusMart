@@ -10,7 +10,7 @@ export default function ChatPage() {
                 <div className="chat-sidebar">
                     <div className="chat-sidebar-header">
                         <div className="flex items-center gap-2">
-                            <i className="fas fa-comments" style={{ color: 'var(--primary)', fontSize: '1.25rem' }}></i>
+                            <i className="fas fa-comments" style={{ color: 'var(--text-primary)', fontSize: '1.2rem' }}></i>
                             <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>Messages</h2>
                         </div>
                         <span className="badge badge-primary" id="total-unread" style={{ fontSize: '0.72rem' }}>Chats</span>
@@ -31,8 +31,8 @@ export default function ChatPage() {
                 {/* Main Chat Area */}
                 <div className="chat-main" id="chat-main">
                     {/* Empty Welcome State (when no conversation is active) */}
-                    <div className="chat-empty-view" id="chat-empty-view" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', textAlign: 'center', padding: '2rem', background: '#F8FAFC' }}>
-                        <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: '#EEF2FF', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', marginBottom: '1.25rem' }}>
+                    <div className="chat-empty-view" id="chat-empty-view" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', textAlign: 'center', padding: '2rem', background: 'var(--background)' }}>
+                        <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: 'var(--surface)', color: 'var(--text-primary)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', marginBottom: '1.25rem' }}>
                             <i className="far fa-comments"></i>
                         </div>
                         <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Your Messages</h3>
@@ -61,7 +61,7 @@ export default function ChatPage() {
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <button type="button" className="btn btn-outline btn-sm text-danger" title="Delete conversation" onClick={() => window.deleteActiveChat && window.deleteActiveChat()} style={{ borderColor: '#FCA5A5', color: 'var(--danger)' }}>
+                                <button type="button" className="btn btn-outline btn-sm text-danger" title="Delete conversation" onClick={() => window.deleteActiveChat && window.deleteActiveChat()} style={{ borderColor: 'rgba(239,68,68,0.35)', color: 'var(--danger)' }}>
                                     <i className="fas fa-trash-alt mr-1"></i> Delete
                                 </button>
                                 <a href="/products.html" className="btn btn-outline btn-sm" title="View Marketplace">

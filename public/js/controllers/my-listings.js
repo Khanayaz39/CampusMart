@@ -96,7 +96,7 @@ function renderListings() {
             <tr>
                 <td colspan="5" style="text-align: center; padding: 4rem 1.5rem;">
                     <div style="max-width: 400px; margin: 0 auto;">
-                        <div style="width: 58px; height: 58px; border-radius: 50%; background: #EEF2FF; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 1.25rem;">
+                        <div style="width: 58px; height: 58px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); color: var(--text-primary); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 1.25rem;">
                             <i class="fas fa-box-open" style="margin: 0; line-height: 1;"></i>
                         </div>
                         <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">No ${label} listings yet</h3>

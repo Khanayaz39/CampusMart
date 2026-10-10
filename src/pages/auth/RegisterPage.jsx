@@ -13,7 +13,7 @@ export default function RegisterPage() {
                     </div>
 
                     <form id="register-form">
-                        <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                        <div className="register-form-grid">
                             {/* Left Column */}
                             <div>
                                 <div className="form-group">
@@ -58,13 +58,9 @@ export default function RegisterPage() {
                                     <select id="college" className="form-control" defaultValue="" required>
                                         <option value="">Select your college</option>
                                         <option value="VIT Bhopal University">VIT Bhopal University</option>
-                                        <option value="VIT Vellore">VIT Vellore</option>
                                         <option value="VIT Chennai">VIT Chennai</option>
                                         <option value="VIT AP">VIT AP</option>
-                                        <option value="IIT Indore">IIT Indore</option>
-                                        <option value="MANIT Bhopal">MANIT Bhopal</option>
-                                        <option value="LNCT Bhopal">LNCT Bhopal</option>
-                                        <option value="Other">Other</option>
+                                        <option value="VIT Vellore">VIT Vellore</option>
                                     </select>
                                 </div>
 
@@ -101,7 +97,7 @@ export default function RegisterPage() {
                         <div className="mt-4 text-center">
                             <label className="flex items-center gap-2 justify-center mb-4 cursor-pointer text-sm">
                                 <input type="checkbox" required className="accent-primary w-4 h-4" />
-                                <span className="text-secondary">I agree to the <a href="#" className="text-primary-color">Terms of Service</a> and <a href="#" className="text-primary-color">Privacy Policy</a></span>
+                                <span className="text-secondary">I agree to the <a href="#" className="text-primary-color font-semibold">Terms of Service</a> and <a href="#" className="text-primary-color font-semibold">Privacy Policy</a></span>
                             </label>
                             <button type="submit" className="btn btn-primary btn-lg w-full" style={{ maxWidth: '300px' }} id="register-btn">
                                 Create Account

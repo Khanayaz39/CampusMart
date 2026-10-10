@@ -1,11 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function Navbar({ user, isAuth, isAdmin, pathname = '/', getAvatarUrl, onLogout }) {
     const isHome = pathname === '/' || pathname.endsWith('index.html');
     const linkClass = 'inline-flex items-center gap-1.5';
     const avatarSrc = typeof getAvatarUrl === 'function'
         ? getAvatarUrl(user)
-        : 'https://ui-avatars.com/api/?name=Student&background=4F46E5&color=fff&bold=true';
+        : 'https://ui-avatars.com/api/?name=Student&background=27272A&color=fff&bold=true';
+
+    const [isDark, setIsDark] = useState(() => {
+        if (typeof document !== 'undefined') {
+            return document.documentElement.classList.contains('dark');
+        }
+        return false;
+    });
+
+    useEffect(() => {
+        const syncThemeState = () => {
+            setIsDark(document.documentElement.classList.contains('dark'));
+        };
+        window.addEventListener('campusmart-theme-change', syncThemeState);
+        return () => window.removeEventListener('campusmart-theme-change', syncThemeState);
+    }, []);
+
+    const handleThemeToggle = () => {
+        if (typeof window.toggleTheme === 'function') {
+            window.toggleTheme();
+        } else {
+            const nextDark = !document.documentElement.classList.contains('dark');
+            document.documentElement.classList.toggle('dark', nextDark);
+            localStorage.setItem('campusmart_theme', nextDark ? 'dark' : 'light');
+            setIsDark(nextDark);
+        }
+    };
 
     return (
         <nav className="navbar antialiased">
@@ -39,7 +65,7 @@ export default function Navbar({ user, isAuth, isAdmin, pathname = '/', getAvata
                             <span>Offers</span>
                             <span
                                 id="nav-offers-badge"
-                                className="nav-unread-pill !bg-secondary"
+                                className="nav-unread-pill !bg-emerald-600"
                                 style={{ display: 'none' }}
                             >
                                 0
@@ -66,7 +92,7 @@ export default function Navbar({ user, isAuth, isAdmin, pathname = '/', getAvata
                         {isAdmin && (
                             <a
                                 href="/admin/dashboard.html"
-                                className={`${linkClass} !text-red-600 !font-bold ${pathname.includes('admin') ? 'active' : ''}`}
+                                className={`${linkClass} !text-red-500 !font-bold ${pathname.includes('admin') ? 'active' : ''}`}
                             >
                                 <i className="fas fa-shield-alt"></i>
                                 <span>Admin</span>
@@ -75,6 +101,16 @@ export default function Navbar({ user, isAuth, isAdmin, pathname = '/', getAvata
                     </div>
 
                     <div className="nav-auth hidden-mobile ml-8">
+                        <button
+                            type="button"
+                            onClick={handleThemeToggle}
+                            className="theme-toggle-btn"
+                            title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                            aria-label="Toggle Dark Mode"
+                        >
+                            <i key={isDark ? 'sun' : 'moon'} className={isDark ? 'fas fa-sun text-amber-400' : 'fas fa-moon'}></i>
+                        </button>
+
                         {isAuth ? (
                             <div className="nav-user">
                                 <div className="relative inline-block">
@@ -93,7 +129,7 @@ export default function Navbar({ user, isAuth, isAdmin, pathname = '/', getAvata
                                     {isAdmin && (
                                         <a
                                             href="/admin/dashboard.html"
-                                            className="!text-red-600 !font-bold bg-red-50 border-b border-red-100"
+                                            className="!text-red-500 !font-bold border-b border-border"
                                         >
                                             <i className="fas fa-shield-alt fa-fw"></i> Admin Dashboard
                                         </a>
@@ -132,11 +168,22 @@ export default function Navbar({ user, isAuth, isAdmin, pathname = '/', getAvata
                     </div>
                 </div>
 
-                <button className="hamburger" type="button" aria-label="Menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
+                <div className="flex items-center gap-2.5 md:hidden">
+                    <button
+                        type="button"
+                        onClick={handleThemeToggle}
+                        className="theme-toggle-btn"
+                        title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                        aria-label="Toggle Dark Mode"
+                    >
+                        <i key={isDark ? 'sun-m' : 'moon-m'} className={isDark ? 'fas fa-sun text-amber-400' : 'fas fa-moon'}></i>
+                    </button>
+                    <button className="hamburger" type="button" aria-label="Menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
             </div>
         </nav>
     );

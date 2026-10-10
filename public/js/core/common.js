@@ -3,15 +3,47 @@ const API_URL = (typeof window !== 'undefined' && window.location.origin && !win
     ? `${window.location.origin}/api`
     : 'http://localhost:5000/api';
 
-// Automatically ensure compiled Tailwind CSS is linked in <head>
-(function ensureTailwindCss() {
-    if (typeof document !== 'undefined' && !document.querySelector('link[href*="tailwind.css"]')) {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = '/css/tailwind.css?v=20';
-        document.head.appendChild(link);
+// Automatically ensure compiled Tailwind CSS is linked in <head> and initialize theme
+(function ensureTailwindCssAndTheme() {
+    if (typeof document !== 'undefined') {
+        const savedTheme = localStorage.getItem('campusmart_theme') || 'light';
+        document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        if (!document.querySelector('link[href*="tailwind.css"]')) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = '/css/tailwind.css?v=21';
+            document.head.appendChild(link);
+        }
     }
 })();
+
+// --- Theme Helpers (Light / Dark Mode) ---
+function getTheme() {
+    return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+    const isDark = theme === 'dark';
+    document.documentElement.classList.toggle('dark', isDark);
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    localStorage.setItem('campusmart_theme', isDark ? 'dark' : 'light');
+
+    document.querySelectorAll('.theme-toggle-btn i').forEach(icon => {
+        icon.className = isDark ? 'fas fa-sun text-amber-400' : 'fas fa-moon';
+    });
+    window.dispatchEvent(new CustomEvent('campusmart-theme-change', { detail: { theme: isDark ? 'dark' : 'light' } }));
+}
+
+function toggleTheme() {
+    const nextTheme = getTheme() === 'dark' ? 'light' : 'dark';
+    applyTheme(nextTheme);
+}
+
+window.getTheme = getTheme;
+window.applyTheme = applyTheme;
+window.toggleTheme = toggleTheme;
 
 // --- Auth Helpers ---
 function getToken() {
@@ -71,6 +103,7 @@ function getConditionClass(condition) {
     if (c.includes('new') && !c.includes('like')) return 'condition-new';
     if (c.includes('like')) return 'condition-like-new';
     if (c.includes('fair')) return 'condition-fair';
+    if (c.includes('poor')) return 'condition-poor';
     return 'condition-good';
 }
 window.getConditionClass = getConditionClass;
@@ -103,10 +136,10 @@ window.closeModal = (id) => document.getElementById(id)?.classList.remove('activ
 
 // --- Avatar Helper ---
 function getAvatarUrl(user) {
-    if (!user) return 'https://ui-avatars.com/api/?name=Student&background=4F46E5&color=fff';
+    if (!user) return 'https://ui-avatars.com/api/?name=Student&background=27272A&color=fff';
     if (user.profileImage && user.profileImage.includes('cloudinary.com')) return user.profileImage;
     const name = (user.name && user.name.trim()) ? user.name.trim() : 'Student';
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=4F46E5&color=fff&bold=true`;
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=27272A&color=fff&bold=true`;
 }
 
 // --- React 18 Synchronous Render Helper ---
@@ -163,7 +196,13 @@ function CampusNavbarComponent({ user, isAuth, isAdmin, pathname }) {
                         h('i', { className: 'fas fa-shield-alt' }), h('span', null, 'Admin')
                     ) : null
                 ),
-                h('div', { className: 'nav-auth hidden-mobile', style: { marginLeft: '2rem' } },
+                h('div', { className: 'nav-auth hidden-mobile', style: { marginLeft: '1.5rem' } },
+                    h('button', {
+                        type: 'button',
+                        className: 'theme-toggle-btn',
+                        onClick: () => window.toggleTheme && window.toggleTheme(),
+                        title: 'Toggle Dark/Light Mode'
+                    }, h('i', { className: getTheme() === 'dark' ? 'fas fa-sun' : 'fas fa-moon' })),
                     isAuth ? h('div', { className: 'nav-user' },
                         h('div', { style: { position: 'relative', display: 'inline-block' } },
                             h('img', { src: getAvatarUrl(user), alt: 'Profile', className: 'nav-avatar' }),
@@ -175,7 +214,7 @@ function CampusNavbarComponent({ user, isAuth, isAdmin, pathname }) {
                         h('div', { className: 'dropdown-menu' },
                             isAdmin ? h('a', {
                                 href: '/admin/dashboard.html',
-                                style: { color: '#DC2626', fontWeight: 700, background: '#FEF2F2', borderBottom: '1px solid #FEE2E2' }
+                                style: { color: '#DC2626', fontWeight: 700, borderBottom: '1px solid var(--border)' }
                             }, h('i', { className: 'fas fa-shield-alt fa-fw' }), ' Admin Dashboard') : null,
                             h('a', { href: '/profile.html' }, h('i', { className: 'fas fa-user fa-fw' }), ' My Profile'),
                             h('a', { href: '/my-listings.html' }, h('i', { className: 'fas fa-list fa-fw' }), ' My Listings'),
@@ -190,8 +229,16 @@ function CampusNavbarComponent({ user, isAuth, isAdmin, pathname }) {
                     )
                 )
             ),
-            h('button', { className: 'hamburger', type: 'button', 'aria-label': 'Menu' },
-                h('span'), h('span'), h('span')
+            h('div', { className: 'flex items-center gap-2' },
+                h('button', {
+                    type: 'button',
+                    className: 'theme-toggle-btn mobile-only-flex',
+                    onClick: () => window.toggleTheme && window.toggleTheme(),
+                    title: 'Toggle Dark/Light Mode'
+                }, h('i', { className: getTheme() === 'dark' ? 'fas fa-sun' : 'fas fa-moon' })),
+                h('button', { className: 'hamburger', type: 'button', 'aria-label': 'Menu' },
+                    h('span'), h('span'), h('span')
+                )
             )
         )
     );
@@ -269,6 +316,7 @@ function injectNavbar() {
     ));
 
     if (!renderedViaReact) {
+        const themeIconClass = getTheme() === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         const authHTML = isAuth ? `
             <div class="nav-user">
                 <div style="position: relative; display: inline-block;">
@@ -276,7 +324,7 @@ function injectNavbar() {
                     ${isAdmin ? `<span title="Administrator" style="position: absolute; bottom: -2px; right: -2px; background: #EF4444; color: white; font-size: 0.55rem; font-weight: 800; padding: 1px 4px; border-radius: 6px; border: 1.5px solid white;">ADMIN</span>` : ''}
                 </div>
                 <div class="dropdown-menu">
-                    ${isAdmin ? `<a href="/admin/dashboard.html" style="color: #DC2626; font-weight: 700; background: #FEF2F2; border-bottom: 1px solid #FEE2E2;"><i class="fas fa-shield-alt fa-fw"></i> Admin Dashboard</a>` : ''}
+                    ${isAdmin ? `<a href="/admin/dashboard.html" style="color: #DC2626; font-weight: 700; border-bottom: 1px solid var(--border);"><i class="fas fa-shield-alt fa-fw"></i> Admin Dashboard</a>` : ''}
                     <a href="/profile.html"><i class="fas fa-user fa-fw"></i> My Profile</a>
                     <a href="/my-listings.html"><i class="fas fa-list fa-fw"></i> My Listings</a>
                     <a href="/favorites.html"><i class="fas fa-heart fa-fw"></i> Favorites</a>
@@ -298,9 +346,15 @@ function injectNavbar() {
                             ${isAuth ? `<a href="/chat.html" class="${pathname.includes('chat') ? 'active' : ''}" style="position: relative; display: inline-flex; align-items: center; gap: 0.35rem;"><i class="fas fa-comment-dots"></i><span>Messages</span><span id="nav-unread-badge" class="nav-unread-pill" style="display: none;">0</span></a>` : ''}
                             ${isAdmin ? `<a href="/admin/dashboard.html" class="${pathname.includes('admin') ? 'active' : ''}" style="color: #DC2626; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;"><i class="fas fa-shield-alt"></i> <span>Admin</span></a>` : ''}
                         </div>
-                        <div class="nav-auth hidden-mobile" style="margin-left: 2rem;">${authHTML}</div>
+                        <div class="nav-auth hidden-mobile" style="margin-left: 1.5rem;">
+                            <button type="button" class="theme-toggle-btn" onclick="window.toggleTheme && window.toggleTheme()" title="Toggle Dark/Light Mode"><i class="${themeIconClass}"></i></button>
+                            ${authHTML}
+                        </div>
                     </div>
-                    <button class="hamburger"><span></span><span></span><span></span></button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" class="theme-toggle-btn mobile-only-flex" onclick="window.toggleTheme && window.toggleTheme()" title="Toggle Dark/Light Mode"><i class="${themeIconClass}"></i></button>
+                        <button class="hamburger"><span></span><span></span><span></span></button>
+                    </div>
                 </div>
             </nav>
         `;

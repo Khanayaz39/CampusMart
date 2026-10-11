@@ -3,8 +3,7 @@ module.exports = {
   darkMode: 'class',
   content: [
     "./src/**/*.{js,jsx}",
-    "./public/**/*.html",
-    "./public/js/**/*.js"
+    "./public/index.html"
   ],
   corePlugins: {
     preflight: false,

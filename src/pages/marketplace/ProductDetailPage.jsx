@@ -1,6 +1,8 @@
 import React from 'react';
+import { useProductDetail } from '../../hooks/useProductDetail.js';
 
 export default function ProductDetailPage() {
+    useProductDetail();
     return (
         <>
             <div id="navbar-container"></div>

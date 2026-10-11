@@ -1,6 +1,8 @@
 import React from 'react';
+import { useProfile } from '../../hooks/useProfile';
 
 export default function ProfilePage() {
+    useProfile();
     return (
         <>
             <div id="navbar-container"></div>

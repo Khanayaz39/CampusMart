@@ -1,4 +1,33 @@
+import { useEffect } from 'react';
+import {
+    API_URL,
+    initCommonLayout,
+    getSavedStatusMap,
+    getDeletedListings,
+    getLocalUserListings,
+    getInitialDemoListings,
+    GLOBAL_PROFANITY_REGEX,
+    isProductFavorited,
+    toggleProductFavorite,
+    formatPrice,
+    isLoggedIn,
+    showToast,
+    getUser,
+    getToken,
+    closeModal,
+    addDeletedListing
+} from '../utils/common.js';
+
 let currentProductId = null;
+let currentSlideIndex = 0;
+
+export function useProductDetail() {
+    useEffect(() => {
+        initCommonLayout();
+        window.toggleFavoriteDetail = toggleFavoriteDetail;
+        initProductDetail();
+    }, []);
+}
 
 function renderItemNotAvailable() {
     document.title = 'Item Not Available - CampusMart';
@@ -11,8 +40,8 @@ function renderItemNotAvailable() {
                 <i class="fas fa-arrow-left"></i> Back to Browse
             </a>
         </div>
-        <div style="max-width: 620px; margin: 3rem auto; padding: 3.5rem 2rem; background: white; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.06); text-align: center;">
-            <div style="width: 88px; height: 88px; margin: 0 auto 1.5rem; background: #FEE2E2; color: #EF4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; box-shadow: 0 8px 20px rgba(239, 68, 68, 0.15);">
+        <div style="max-width: 620px; margin: 3rem auto; padding: 3.5rem 2rem; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.06); text-align: center;">
+            <div style="width: 88px; height: 88px; margin: 0 auto 1.5rem; background: rgba(239, 68, 68, 0.12); color: #EF4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.4rem;">
                 <i class="fas fa-box-open"></i>
             </div>
             <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.75rem;">Item Not Available</h1>
@@ -34,7 +63,7 @@ function renderItemNotAvailable() {
     `;
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+async function initProductDetail() {
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
 
@@ -43,10 +72,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    const statusMap = (typeof getSavedStatusMap === 'function') ? getSavedStatusMap() : {};
-    const deletedListings = (typeof getDeletedListings === 'function') ? getDeletedListings() : [];
+    const statusMap = getSavedStatusMap();
+    const deletedListings = getDeletedListings();
 
-    // If marked as deleted or explicitly sold in statusMap
     if (deletedListings.includes(String(productId)) || statusMap[String(productId)] === 'sold') {
         renderItemNotAvailable();
         return;
@@ -65,23 +93,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Check local user listings & demo listings
     if (!product) {
-        const userListings = (typeof getLocalUserListings === 'function') ? getLocalUserListings() : [];
-        const demoListings = (typeof getInitialDemoListings === 'function') ? getInitialDemoListings() : [];
+        const userListings = getLocalUserListings();
+        const demoListings = getInitialDemoListings();
         const found = [...userListings, ...demoListings].find(p => String(p._id || p.id) === String(productId));
         if (found) {
             product = { ...found };
         }
     }
 
-    // If not found anywhere, show "Item Not Available"
     if (!product) {
         renderItemNotAvailable();
         return;
     }
 
-    // Check effective status (must be available)
     const effectiveStatus = statusMap[String(productId)] || product.status || 'available';
     if (effectiveStatus !== 'available') {
         renderItemNotAvailable();
@@ -95,7 +120,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     currentProductId = product._id || productId;
 
-    // Initialize favorite button state
     const favBtn = document.getElementById('btn-fav');
     if (favBtn) {
         const isFav = isProductFavorited(currentProductId);
@@ -106,22 +130,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Populate DOM
     const titleEl = document.getElementById('product-title');
     if (titleEl) {
         titleEl.innerText = product.title;
         titleEl.classList.remove('skeleton-text', 'lg');
     }
-    
+
     const priceEl = document.getElementById('product-price');
     if (priceEl) {
         priceEl.innerText = formatPrice(product.price);
         priceEl.classList.remove('skeleton-text', 'sm');
     }
-    
+
     const descEl = document.getElementById('product-desc');
     if (descEl) descEl.innerText = product.description;
-    
+
     const cleanHostel = (raw) => (raw || '').replace(/[•,\-\s]*room\s*[a-z0-9\-]+/i, '').trim();
     const safeHostel = cleanHostel(product.seller?.hostel || product.hostel);
 
@@ -150,7 +173,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const sellerAvatar = document.getElementById('seller-avatar');
     if (sellerAvatar) {
         const sName = product.seller?.name || 'Student';
-        sellerAvatar.src = product.seller?.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(sName)}&background=4F46E5&color=fff&size=100&bold=true`;
+        sellerAvatar.src = product.seller?.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(sName)}&background=27272A&color=fff&size=100&bold=true`;
         sellerAvatar.classList.remove('skeleton');
     }
 
@@ -164,11 +187,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         negEl.innerText = product.negotiable !== false ? 'Accepting student offers' : 'Fixed Price';
     }
 
-    // Photo Slider Initialization
     const images = (product.images && product.images.length > 0) ? product.images : ['https://via.placeholder.com/800x600?text=No+Photo'];
     initPhotoSlider(images);
 
-    // Button actions
     const startChatWithSeller = () => {
         if (!isLoggedIn()) {
             showToast('Please login to chat with seller', 'warning');
@@ -192,7 +213,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btn-chat')?.addEventListener('click', startChatWithSeller);
     document.getElementById('btn-seller-profile-chat')?.addEventListener('click', startChatWithSeller);
 
-    // Make an Offer Action
     const offerBtn = document.getElementById('btn-make-offer');
     const offerModal = document.getElementById('modal-offer');
     const offerForm = document.getElementById('form-make-offer');
@@ -216,7 +236,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Populate modal data
         document.getElementById('modal-offer-product-title').innerText = product.title || 'Product';
         document.getElementById('modal-offer-product-price').innerText = formatPrice(product.price);
 
@@ -226,7 +245,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const p20 = Math.max(1, Math.round(priceNum * 0.8));
 
         const amountInput = document.getElementById('offer-amount-input');
-        amountInput.value = p10; // default preset
+        amountInput.value = p10;
 
         const btn10 = document.getElementById('preset-10');
         const btn15 = document.getElementById('preset-15');
@@ -289,12 +308,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Modal Helpers
-    window.closeModal = function(id) {
-        document.getElementById(id)?.classList.remove('active');
-    };
-
-    // Setup Reporting
     const reportBtn = document.getElementById('btn-open-report');
     const reportModal = document.getElementById('modal-report');
     const reportForm = document.getElementById('form-report-product');
@@ -354,7 +367,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Setup Admin Delete Listing Button
     const adminDeleteBtn = document.getElementById('btn-admin-delete-listing');
     if (adminDeleteBtn && me && me.role === 'admin') {
         adminDeleteBtn.style.display = 'inline-flex';
@@ -365,9 +377,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             const idStr = String(currentProductId);
-            if (typeof addDeletedListing === 'function') {
-                addDeletedListing(idStr);
-            }
+            addDeletedListing(idStr);
 
             adminDeleteBtn.disabled = true;
             adminDeleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
@@ -393,7 +403,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Setup Rating & Reviewing
     const reviewBtn = document.getElementById('btn-open-review');
     const reviewModal = document.getElementById('modal-review');
     const reviewForm = document.getElementById('form-review-seller');
@@ -408,11 +417,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         function renderStars(val) {
             stars.forEach(s => {
                 const sRating = parseInt(s.dataset.rating, 10);
-                if (sRating <= val) {
-                    s.style.color = '#F59E0B';
-                } else {
-                    s.style.color = '#CBD5E1';
-                }
+                s.style.color = sRating <= val ? '#F59E0B' : '#CBD5E1';
             });
         }
 
@@ -447,9 +452,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        const me = getUser();
+        const meUser = getUser();
         const sellerId = product.seller?._id || product.seller;
-        if (me && sellerId && (me._id === sellerId || me.id === sellerId)) {
+        if (meUser && sellerId && (meUser._id === sellerId || meUser.id === sellerId)) {
             showToast('You cannot review your own listing', 'warning');
             return;
         }
@@ -508,9 +513,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             submitBtn.innerHTML = '<i class="fas fa-check mr-1"></i> Submit Review';
         }
     });
-});
-
-let currentSlideIndex = 0;
+}
 
 function initPhotoSlider(images) {
     if (!images || images.length === 0) {
@@ -574,7 +577,7 @@ function initPhotoSlider(images) {
 
     if (thumbsContainer) {
         thumbsContainer.innerHTML = images.map((img, i) => `
-            <img src="${img}" class="slider-thumb ${i === 0 ? 'active' : ''}" onclick="window.goToSlide(${i})" alt="Slide thumb ${i+1}">
+            <img src="${img}" class="slider-thumb ${i === 0 ? 'active' : ''}" onclick="window.goToSlide(${i})" alt="Slide thumb ${i + 1}">
         `).join('');
     }
 
@@ -612,4 +615,3 @@ async function toggleFavoriteDetail(btn) {
         showToast('Removed from favorites', 'info');
     }
 }
-

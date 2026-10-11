@@ -4,17 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CampusMart - Student Marketplace</title>
-    <!-- Pre-paint Theme Initialization (prevents light/dark flash) -->
-    <script>
-        (function () {
-            try {
-                var savedTheme = localStorage.getItem('campusmart_theme');
-                if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                }
-            } catch (e) {}
-        })();
-    </script>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,45 +11,17 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Compiled Tailwind CSS Bundle -->
-    <link rel="stylesheet" href="/css/tailwind.css?v=22">
+    <link rel="stylesheet" href="/css/tailwind.css?v=23">
 </head>
 <body>
     <!-- Single React Root Container -->
     <div id="root"></div>
 
-    <!-- React 18 Compiled .jsx Bundle + Core Utilities -->
-    <script src="/js/bundle/react-bundle.js?v=22"></script>
-    <script src="/js/core/common.js?v=22"></script>
-    <script>
-        (function () {
-            var p = (window.location.pathname || '/').toLowerCase();
-            if (p.indexOf('chat') !== -1) {
-                document.write('<script src="/socket.io/socket.io.js"><\/script>');
-                document.write('<script src="/js/controllers/chat.js?v=22"><\/script>');
-            } else if (p.indexOf('offers') !== -1) {
-                document.write('<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"><\/script>');
-                document.write('<script src="/js/controllers/offers.js?v=22"><\/script>');
-            } else if (p.indexOf('profile') !== -1) {
-                document.write('<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"><\/script>');
-                document.write('<script src="/js/controllers/profile.js?v=22"><\/script>');
-            } else if (p.indexOf('admin') !== -1) {
-                document.write('<script src="/js/controllers/admin.js?v=22"><\/script>');
-            } else if (p.indexOf('product-detail') !== -1) {
-                document.write('<script src="/js/controllers/product-detail.js?v=22"><\/script>');
-            } else if (p.indexOf('products') !== -1) {
-                document.write('<script src="/js/controllers/products.js?v=22"><\/script>');
-            } else if (p.indexOf('create-listing') !== -1) {
-                document.write('<script src="/js/controllers/create-listing.js?v=22"><\/script>');
-            } else if (p.indexOf('my-listings') !== -1) {
-                document.write('<script src="/js/controllers/my-listings.js?v=22"><\/script>');
-            } else if (p.indexOf('favorites') !== -1) {
-                document.write('<script src="/js/controllers/favorites.js?v=22"><\/script>');
-            } else if (p.indexOf('login') !== -1 || p.indexOf('register') !== -1) {
-                document.write('<script src="/js/controllers/auth.js?v=22"><\/script>');
-            } else {
-                document.write('<script src="/js/controllers/home.js?v=22"><\/script>');
-            }
-        })();
-    </script>
+    <!-- Third-Party Libraries (Socket.IO & jsQR) -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+    <!-- Compiled React 18 Application Bundle -->
+    <script src="/js/bundle/react-bundle.js?v=23"></script>
 </body>
 </html>

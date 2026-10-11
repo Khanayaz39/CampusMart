@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useAdminDashboard } from '../../hooks/useAdminDashboard';
 
 export default function AdminDashboardPage() {
+    useAdminDashboard();
     const [isDark, setIsDark] = useState(() => {
         if (typeof document !== 'undefined') {
             return document.documentElement.classList.contains('dark');

@@ -46,7 +46,7 @@ function applyPageMetadata(pathname = '/') {
     document.body.removeAttribute('style');
 
     const savedTheme = localStorage.getItem('campusmart_theme');
-    if (savedTheme === 'dark') {
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
         document.documentElement.setAttribute('data-theme', 'dark');
     } else if (savedTheme === 'light') {

@@ -1,6 +1,8 @@
 import React from 'react';
+import { useOffers } from '../../hooks/useOffers.js';
 
 export default function OffersPage() {
+    useOffers();
     return (
         <>
             <div id="navbar-container"></div>

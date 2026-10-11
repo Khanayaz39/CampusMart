@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { initAuthPage } from '../../utils/authHelper.js';
 
 export default function RegisterPage() {
+    useEffect(() => {
+        initAuthPage();
+    }, []);
+
     return (
         <>
             <div id="navbar-container"></div>

@@ -1,6 +1,8 @@
 import React from 'react';
+import { useChat } from '../../hooks/useChat.js';
 
 export default function ChatPage() {
+    useChat();
     return (
         <>
             <div id="navbar-container"></div>

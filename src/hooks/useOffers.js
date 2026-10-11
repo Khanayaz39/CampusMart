@@ -1,108 +1,123 @@
-// ============================================
-// CampusMart — Offers & Deal Negotiations
-// ============================================
+import { useEffect } from 'react';
+import {
+    API_URL,
+    initCommonLayout,
+    protectPage,
+    getToken,
+    getUser,
+    showToast,
+    closeModal,
+    escapeHtml,
+    formatPrice,
+    decodeSellerQrImage,
+    extractVpaFromQrString,
+    updateNavbarUnreadIndicator
+} from '../utils/common.js';
 
 let currentOffersTab = 'sent';
 let sentOffersData = [];
 let receivedOffersData = [];
 let pendingAcceptOfferId = null;
 
-document.addEventListener('DOMContentLoaded', () => {
-    protectPage();
+export function useOffers() {
+    useEffect(() => {
+        initCommonLayout();
+        protectPage();
 
-    loadSentOffers();
-    loadReceivedOffers();
+        window.switchOffersTab = switchOffersTab;
+        window.openUpiPaymentModal = openUpiPaymentModal;
+        window.markOfferPaymentCompleted = markOfferPaymentCompleted;
+        window.handleSellerAcceptOffer = handleSellerAcceptOffer;
+        window.openCounterModal = openCounterModal;
+        window.respondToOfferAction = respondToOfferAction;
+        window.acceptCounterOffer = acceptCounterOffer;
+        window.deleteOfferById = deleteOfferById;
 
-    // Check URL parameters for default tab
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('tab') === 'received') {
-        switchOffersTab('received');
-    }
+        loadSentOffers();
+        loadReceivedOffers();
 
-    // Copy UPI ID button handler
-    document.getElementById('btn-copy-upi')?.addEventListener('click', () => {
-        const vpa = document.getElementById('upi-modal-vpa')?.innerText;
-        if (vpa) {
-            navigator.clipboard.writeText(vpa).then(() => {
-                showToast('UPI ID copied to clipboard!', 'success');
-            }).catch(() => {
-                showToast('Could not copy UPI ID', 'warning');
-            });
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('tab') === 'received') {
+            switchOffersTab('received');
         }
-    });
 
-    // Handle Counter Offer Form Submission
-    document.getElementById('form-submit-counter')?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const offerId = document.getElementById('counter-offer-id').value;
-        const amount = document.getElementById('counter-amount-input').value.trim();
-        const message = document.getElementById('counter-message-input').value.trim();
-
-        if (!offerId || !amount) return;
-
-        try {
-            const token = getToken();
-            const res = await fetch(`${API_URL}/offers/${offerId}/respond`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    status: 'countered',
-                    counterAmount: Number(amount),
-                    counterMessage: message
-                })
-            });
-
-            if (res.ok) {
-                closeModal('modal-counter-offer');
-                showToast('Counter offer sent! Buyer notified via email.', 'success');
-                loadReceivedOffers();
-                loadSentOffers();
-            } else {
-                const data = await res.json();
-                showToast(data.message || 'Failed to send counter offer', 'error');
+        document.getElementById('btn-copy-upi')?.addEventListener('click', () => {
+            const vpa = document.getElementById('upi-modal-vpa')?.innerText;
+            if (vpa) {
+                navigator.clipboard.writeText(vpa).then(() => {
+                    showToast('UPI ID copied to clipboard!', 'success');
+                }).catch(() => {
+                    showToast('Could not copy UPI ID', 'warning');
+                });
             }
-        } catch (err) {
-            showToast('Network error while responding', 'error');
-        }
-    });
+        });
 
-    // Handle Seller UPI Setup & Accept
-    document.getElementById('form-save-seller-upi')?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const upiVal = document.getElementById('seller-upi-input').value.trim();
-        if (!upiVal || !pendingAcceptOfferId) return;
+        document.getElementById('form-submit-counter')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const offerId = document.getElementById('counter-offer-id').value;
+            const amount = document.getElementById('counter-amount-input').value.trim();
+            const message = document.getElementById('counter-message-input').value.trim();
 
-        try {
-            const token = getToken();
-            // Save UPI ID to profile
-            await fetch(`${API_URL}/auth/profile`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ upiId: upiVal })
-            });
+            if (!offerId || !amount) return;
 
-            // Update user in local storage
-            const curUser = getUser() || {};
-            curUser.upiId = upiVal;
-            localStorage.setItem('user', JSON.stringify(curUser));
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/offers/${offerId}/respond`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        status: 'countered',
+                        counterAmount: Number(amount),
+                        counterMessage: message
+                    })
+                });
 
-            closeModal('modal-seller-upi-setup');
+                if (res.ok) {
+                    closeModal('modal-counter-offer');
+                    showToast('Counter offer sent! Buyer notified via email.', 'success');
+                    loadReceivedOffers();
+                    loadSentOffers();
+                } else {
+                    const data = await res.json();
+                    showToast(data.message || 'Failed to send counter offer', 'error');
+                }
+            } catch (err) {
+                showToast('Network error while responding', 'error');
+            }
+        });
 
-            // Now complete accepting the offer
-            await executeAcceptOffer(pendingAcceptOfferId);
-        } catch (err) {
-            showToast('Error saving UPI ID', 'error');
-        }
-    });
-});
+        document.getElementById('form-save-seller-upi')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const upiVal = document.getElementById('seller-upi-input').value.trim();
+            if (!upiVal || !pendingAcceptOfferId) return;
 
-// Switch Between Sent & Received Tabs
+            try {
+                const token = getToken();
+                await fetch(`${API_URL}/auth/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ upiId: upiVal })
+                });
+
+                const curUser = getUser() || {};
+                curUser.upiId = upiVal;
+                localStorage.setItem('user', JSON.stringify(curUser));
+
+                closeModal('modal-seller-upi-setup');
+                await executeAcceptOffer(pendingAcceptOfferId);
+            } catch (err) {
+                showToast('Error saving UPI ID', 'error');
+            }
+        });
+    }, []);
+}
+
 function switchOffersTab(tabName) {
     currentOffersTab = tabName;
     const tabSent = document.getElementById('tab-sent');
@@ -111,21 +126,18 @@ function switchOffersTab(tabName) {
     const secReceived = document.getElementById('section-received-offers');
 
     if (tabName === 'sent') {
-        tabSent.classList.add('active');
-        tabReceived.classList.remove('active');
-        secSent.style.display = 'block';
-        secReceived.style.display = 'none';
+        tabSent?.classList.add('active');
+        tabReceived?.classList.remove('active');
+        if (secSent) secSent.style.display = 'block';
+        if (secReceived) secReceived.style.display = 'none';
     } else {
-        tabSent.classList.remove('active');
-        tabReceived.classList.add('active');
-        secSent.style.display = 'none';
-        secReceived.style.display = 'block';
+        tabSent?.classList.remove('active');
+        tabReceived?.classList.add('active');
+        if (secSent) secSent.style.display = 'none';
+        if (secReceived) secReceived.style.display = 'block';
     }
 }
 
-// ----------------------------------------------------
-// 1. Load Offers Sent (As Buyer)
-// ----------------------------------------------------
 async function loadSentOffers() {
     const grid = document.getElementById('grid-sent-offers');
     const badge = document.getElementById('badge-sent-count');
@@ -163,7 +175,6 @@ async function loadSentOffers() {
 
             return `
                 <div class="card stagger-${(i % 5) + 1} animate-fade-in-up" style="border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--border);">
-                    <!-- Top Item Summary -->
                     <div style="display: flex; align-items: center; gap: 0.9rem; padding: 1rem 1.15rem; border-bottom: 1px solid var(--border); background: var(--card-bg);">
                         <img src="${imageUrl}" alt="${escapeHtml(product.title || 'Item')}" style="width: 68px; height: 68px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0;">
                         <div style="flex: 1; min-width: 0;">
@@ -179,10 +190,8 @@ async function loadSentOffers() {
                         </div>
                     </div>
 
-                    <!-- Card Body -->
                     <div style="padding: 1.15rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; background: var(--surface);">
                         <div>
-                            <!-- Offer Amount + Status Row -->
                             <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.85rem;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                                     <span class="text-xs text-secondary font-bold" style="text-transform: uppercase; letter-spacing: 0.04em;">Your Offer</span>
@@ -193,7 +202,6 @@ async function loadSentOffers() {
                                 <div>${statusBadge}</div>
                             </div>
 
-                            <!-- Seller Info Box -->
                             <div style="background: var(--card-bg); padding: 0.75rem 0.9rem; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 0.75rem;">
                                 <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; display: flex; align-items: center; gap: 0.45rem;">
                                     <i class="fas fa-store text-primary-color"></i>
@@ -220,10 +228,9 @@ async function loadSentOffers() {
                             ` : ''}
                         </div>
 
-                        <!-- Action Buttons based on status -->
                         <div style="margin-top: 0.5rem; padding-top: 0.85rem; border-top: 1px dashed var(--border);">
                             ${isAccepted ? `
-                                <button type="button" class="btn btn-secondary w-full justify-center mb-2" onclick="openUpiPaymentModal('${offer._id}', 'sent')" style="font-weight: 700; border-radius: 10px;">
+                                <button type="button" class="btn btn-secondary w-full justify-center mb-2" onclick="window.openUpiPaymentModal('${offer._id}', 'sent')" style="font-weight: 700; border-radius: 10px;">
                                     <i class="fas fa-qrcode mr-1"></i> Pay ₹${Number(offer.amount).toLocaleString('en-IN')} via UPI
                                 </button>
                             ` : ''}
@@ -236,7 +243,7 @@ async function loadSentOffers() {
 
                             ${isCountered ? `
                                 <div class="flex gap-2 mb-2">
-                                    <button type="button" class="btn btn-secondary btn-sm flex-1 justify-center" onclick="acceptCounterOffer('${offer._id}', ${offer.counterAmount})" style="font-weight: 700;">
+                                    <button type="button" class="btn btn-secondary btn-sm flex-1 justify-center" onclick="window.acceptCounterOffer('${offer._id}', ${offer.counterAmount})" style="font-weight: 700;">
                                         <i class="fas fa-check mr-1"></i> Accept ₹${Number(offer.counterAmount).toLocaleString('en-IN')}
                                     </button>
                                 </div>
@@ -246,7 +253,7 @@ async function loadSentOffers() {
                                 <a href="/chat.html?sellerId=${seller._id || ''}&seller=${encodeURIComponent(seller.name || 'Seller')}&productId=${product._id || ''}&product=${encodeURIComponent(product.title || 'Item')}" class="btn btn-outline btn-sm" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; font-weight: 700; border-radius: 8px; text-decoration: none;">
                                     <i class="fas fa-comment-dots"></i> Chat with Seller
                                 </a>
-                                <button type="button" onclick="deleteOfferById('${offer._id}')" class="btn btn-ghost btn-sm text-danger" style="padding: 0.35rem 0.65rem; font-size: 0.78rem; font-weight: 700; border-radius: 8px;" title="Withdraw and delete this offer">
+                                <button type="button" onclick="window.deleteOfferById('${offer._id}')" class="btn btn-ghost btn-sm text-danger" style="padding: 0.35rem 0.65rem; font-size: 0.78rem; font-weight: 700; border-radius: 8px;" title="Withdraw and delete this offer">
                                     <i class="fas fa-trash-alt"></i> Delete
                                 </button>
                             </div>
@@ -261,9 +268,6 @@ async function loadSentOffers() {
     }
 }
 
-// ----------------------------------------------------
-// 2. Load Offers Received (As Seller)
-// ----------------------------------------------------
 async function loadReceivedOffers() {
     const grid = document.getElementById('grid-received-offers');
     const badge = document.getElementById('badge-received-count');
@@ -280,7 +284,6 @@ async function loadReceivedOffers() {
         const offers = await res.json();
         receivedOffersData = Array.isArray(offers) ? offers : [];
 
-        // Count pending
         const pendingCount = receivedOffersData.filter(o => o.status === 'pending').length;
         if (badge) {
             badge.innerText = pendingCount > 0 ? `${pendingCount} new` : receivedOffersData.length;
@@ -306,7 +309,6 @@ async function loadReceivedOffers() {
 
             return `
                 <div class="card stagger-${(i % 5) + 1} animate-fade-in-up" style="border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--border);">
-                    <!-- Top Item Summary -->
                     <div style="display: flex; align-items: center; gap: 0.9rem; padding: 1rem 1.15rem; border-bottom: 1px solid var(--border); background: var(--card-bg);">
                         <img src="${imageUrl}" alt="${escapeHtml(product.title || 'Item')}" style="width: 68px; height: 68px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0;">
                         <div style="flex: 1; min-width: 0;">
@@ -322,10 +324,8 @@ async function loadReceivedOffers() {
                         </div>
                     </div>
 
-                    <!-- Card Body -->
                     <div style="padding: 1.15rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; background: var(--surface);">
                         <div>
-                            <!-- Buyer's Bid + Status Box -->
                             <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.85rem;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                                     <span class="text-xs text-secondary font-bold" style="text-transform: uppercase; letter-spacing: 0.04em;">Buyer's Bid</span>
@@ -336,7 +336,6 @@ async function loadReceivedOffers() {
                                 <div>${statusBadge}</div>
                             </div>
 
-                            <!-- Buyer Details Card -->
                             <div style="background: var(--card-bg); padding: 0.8rem 0.95rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 0.75rem;">
                                 <div style="font-size: 0.88rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.45rem;">
                                     <i class="fas fa-user-graduate text-primary-color" style="flex-shrink: 0;"></i>
@@ -354,33 +353,32 @@ async function loadReceivedOffers() {
                             </div>
                         </div>
 
-                        <!-- Actions for Seller -->
                         <div style="margin-top: 0.5rem; padding-top: 0.85rem; border-top: 1px dashed var(--border);">
                             ${isPending ? `
                                 <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.5rem; margin-bottom: 0.75rem;">
-                                    <button type="button" class="btn btn-secondary btn-sm justify-center" onclick="handleSellerAcceptOffer('${offer._id}')" style="font-weight: 700; border-radius: 8px; padding: 0.45rem 0.6rem;">
+                                    <button type="button" class="btn btn-secondary btn-sm justify-center" onclick="window.handleSellerAcceptOffer('${offer._id}')" style="font-weight: 700; border-radius: 8px; padding: 0.45rem 0.6rem;">
                                         <i class="fas fa-check"></i> Accept
                                     </button>
-                                    <button type="button" class="btn btn-outline btn-sm justify-center" onclick="openCounterModal('${offer._id}', ${product.price || offer.amount})" style="font-weight: 700; border-radius: 8px; padding: 0.45rem 0.6rem;">
+                                    <button type="button" class="btn btn-outline btn-sm justify-center" onclick="window.openCounterModal('${offer._id}', ${product.price || offer.amount})" style="font-weight: 700; border-radius: 8px; padding: 0.45rem 0.6rem;">
                                         <i class="fas fa-exchange-alt"></i> Counter
                                     </button>
-                                    <button type="button" class="btn btn-outline btn-sm justify-center text-danger" onclick="respondToOfferAction('${offer._id}', 'rejected')" title="Decline offer" style="font-weight: 700; border-radius: 8px; padding: 0.45rem 0.65rem; border-color: #FCA5A5; color: #DC2626; background: #FEF2F2;">
+                                    <button type="button" class="btn btn-outline btn-sm justify-center text-danger" onclick="window.respondToOfferAction('${offer._id}', 'rejected')" title="Decline offer" style="font-weight: 700; border-radius: 8px; padding: 0.45rem 0.65rem; border-color: rgba(239,68,68,0.35); color: #EF4444; background: rgba(239,68,68,0.08);">
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </div>
                             ` : ''}
 
                             ${isAccepted ? `
-                                <div style="background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; text-align: center; margin-bottom: 0.5rem;">
+                                <div style="background: rgba(16, 185, 129, 0.1); color: var(--secondary); border: 1px solid rgba(16, 185, 129, 0.25); padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; text-align: center; margin-bottom: 0.5rem;">
                                     <i class="fas fa-check-circle mr-1"></i> Offer Accepted! Buyer can scan your UPI to pay.
                                 </div>
-                                <button type="button" class="btn btn-secondary btn-sm w-full justify-center mb-2" onclick="markOfferPaymentCompleted('${offer._id}')" style="font-weight: 700; border-radius: 8px;">
+                                <button type="button" class="btn btn-secondary btn-sm w-full justify-center mb-2" onclick="window.markOfferPaymentCompleted('${offer._id}')" style="font-weight: 700; border-radius: 8px;">
                                     <i class="fas fa-check-double mr-1"></i> Confirm Payment & Complete Deal
                                 </button>
                             ` : ''}
 
                             ${isCompleted ? `
-                                <div style="background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; padding: 0.55rem 0.75rem; border-radius: 8px; font-size: 0.82rem; font-weight: 700; text-align: center; margin-bottom: 0.65rem;">
+                                <div style="background: rgba(16, 185, 129, 0.1); color: var(--secondary); border: 1px solid rgba(16, 185, 129, 0.25); padding: 0.55rem 0.75rem; border-radius: 8px; font-size: 0.82rem; font-weight: 700; text-align: center; margin-bottom: 0.65rem;">
                                     <i class="fas fa-check-double mr-1"></i> Deal Completed & Payment Received
                                 </div>
                             ` : ''}
@@ -389,7 +387,7 @@ async function loadReceivedOffers() {
                                 <a href="/chat.html?sellerId=${buyer._id || ''}&seller=${encodeURIComponent(buyer.name || 'Buyer')}&productId=${product._id || ''}&product=${encodeURIComponent(product.title || 'Item')}" class="btn btn-outline btn-sm" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; font-weight: 700; border-radius: 8px; text-decoration: none;">
                                     <i class="fas fa-comment-dots"></i> Chat with Buyer
                                 </a>
-                                <button type="button" onclick="deleteOfferById('${offer._id}')" class="btn btn-ghost btn-sm text-danger" style="padding: 0.35rem 0.65rem; font-size: 0.78rem; font-weight: 700; border-radius: 8px;" title="Remove this offer">
+                                <button type="button" onclick="window.deleteOfferById('${offer._id}')" class="btn btn-ghost btn-sm text-danger" style="padding: 0.35rem 0.65rem; font-size: 0.78rem; font-weight: 700; border-radius: 8px;" title="Remove this offer">
                                     <i class="fas fa-trash-alt"></i> Delete
                                 </button>
                             </div>
@@ -404,9 +402,6 @@ async function loadReceivedOffers() {
     }
 }
 
-// ----------------------------------------------------
-// 3. Dynamic UPI Payment QR Code Generator
-// ----------------------------------------------------
 async function openUpiPaymentModal(offerId, source = 'sent') {
     const list = source === 'sent' ? sentOffersData : receivedOffersData;
     const offer = list.find(o => String(o._id) === String(offerId));
@@ -423,11 +418,9 @@ async function openUpiPaymentModal(offerId, source = 'sent') {
     const hasCustomQr = Boolean(seller.upiQrImage && seller.upiQrImage.trim() !== '');
     const productTitle = product.title || 'Campus Purchase';
 
-    // Populate top amount & item title
     document.getElementById('upi-modal-amount').innerText = `₹${amount.toLocaleString('en-IN')}`;
     document.getElementById('upi-modal-item-title').innerText = productTitle;
 
-    // 1. Get seller's UPI ID: either from seller.upiId or decoded directly from seller.upiQrImage!
     let sellerVpa = (seller.upiId && seller.upiId.trim()) ? seller.upiId.trim() : '';
     if (!sellerVpa && hasCustomQr) {
         const rawQr = await decodeSellerQrImage(seller.upiQrImage);
@@ -451,7 +444,6 @@ async function openUpiPaymentModal(offerId, source = 'sent') {
         confirmDirectPaidBtn.onclick = () => markOfferPaymentCompleted(offer._id);
     }
 
-    // If seller has NEITHER uploaded a QR image NOR added a UPI ID, show "Seller has not given QR, contact through chat"
     if (!hasRealVpa && !hasCustomQr) {
         if (availableSection) availableSection.style.display = 'none';
         if (missingSection) missingSection.style.display = 'block';
@@ -471,7 +463,6 @@ async function openUpiPaymentModal(offerId, source = 'sent') {
     const modeBadge = document.getElementById('upi-qr-mode-badge');
     const toggleBtn = document.getElementById('btn-toggle-qr-mode');
 
-    // Build standard NPCI UPI Intent URI with the exact custom offer amount (e.g. ₹300) locked in (&am=300)
     const upiUri = hasRealVpa
         ? `upi://pay?pa=${encodeURIComponent(sellerVpa)}&pn=${encodeURIComponent(sellerName)}&am=${amount}&cu=INR&tn=${encodeURIComponent('CampusMart - ' + productTitle)}`
         : '#';
@@ -491,7 +482,6 @@ async function openUpiPaymentModal(offerId, source = 'sent') {
         if (mobileLink) mobileLink.style.display = 'none';
     }
 
-    // Default to Dynamic Custom-Amount QR whenever we have the seller's VPA (including extracted from their uploaded QR!)
     let showingDynamicAmountQr = hasRealVpa;
 
     const renderModalQrState = () => {
@@ -537,12 +527,9 @@ async function openUpiPaymentModal(offerId, source = 'sent') {
     }
 
     renderModalQrState();
-
-    // Open Modal
     document.getElementById('modal-upi-qr')?.classList.add('active');
 }
 
-// Mark an accepted offer's payment & deal as completed
 async function markOfferPaymentCompleted(offerId) {
     if (!confirm('Confirm that payment has been completed for this deal? This will mark the trade as completed and the item as sold.')) return;
 
@@ -571,15 +558,11 @@ async function markOfferPaymentCompleted(offerId) {
     }
 }
 
-// ----------------------------------------------------
-// 4. Seller Actions on Received Offers
-// ----------------------------------------------------
 function handleSellerAcceptOffer(offerId) {
     const currentUser = getUser() || {};
     const hasUpiId = Boolean(currentUser.upiId && currentUser.upiId.trim() !== '');
     const hasQrImg = Boolean(currentUser.upiQrImage && currentUser.upiQrImage.trim() !== '');
 
-    // If seller has neither a custom QR image nor a UPI ID saved in profile yet, ask them to provide one first!
     if (!hasUpiId && !hasQrImg) {
         pendingAcceptOfferId = offerId;
         document.getElementById('modal-seller-upi-setup')?.classList.add('active');
@@ -625,7 +608,7 @@ function openCounterModal(offerId, currentPrice) {
 }
 
 async function respondToOfferAction(offerId, status) {
-    if (!confirm(`Are you sure you want to decline this offer?`)) return;
+    if (!confirm('Are you sure you want to decline this offer?')) return;
 
     try {
         const token = getToken();
@@ -650,7 +633,6 @@ async function respondToOfferAction(offerId, status) {
     }
 }
 
-// Buyer accepts a counter-offer
 async function acceptCounterOffer(offerId, counterAmount) {
     if (!confirm(`Accept the counter offer of ₹${Number(counterAmount).toLocaleString('en-IN')}?`)) return;
 
@@ -677,7 +659,6 @@ async function acceptCounterOffer(offerId, counterAmount) {
     }
 }
 
-// Delete / Withdraw an Offer
 async function deleteOfferById(offerId) {
     if (!confirm('Are you sure you want to withdraw and delete this offer?')) return;
 
@@ -694,9 +675,7 @@ async function deleteOfferById(offerId) {
             showToast('Offer deleted successfully', 'info');
             loadSentOffers();
             loadReceivedOffers();
-            if (typeof updateNavbarUnreadIndicator === 'function') {
-                updateNavbarUnreadIndicator();
-            }
+            updateNavbarUnreadIndicator();
         } else {
             const data = await res.json();
             showToast(data.message || 'Could not delete offer', 'error');
@@ -706,9 +685,6 @@ async function deleteOfferById(offerId) {
     }
 }
 
-// ----------------------------------------------------
-// UI Helpers
-// ----------------------------------------------------
 function getStatusBadgeHTML(status, counterAmount) {
     switch (status) {
         case 'pending':
@@ -761,4 +737,3 @@ function renderEmptyReceivedOffers(container) {
         </div>
     `;
 }
-

@@ -1,12 +1,13 @@
-// ============================================
-// CampusMart — Authentication & OTP Verification
-// ============================================
+import { API_URL, initCommonLayout, showToast } from './common.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Password visibility toggle
+let resendTimerInterval = null;
+
+export function initAuthPage() {
+    initCommonLayout();
+
     const togglePassword = document.getElementById('toggle-password');
     if (togglePassword) {
-        togglePassword.addEventListener('click', function() {
+        togglePassword.addEventListener('click', function () {
             const passwordInput = document.getElementById('password');
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
@@ -15,18 +16,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Login Form Handler
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('login-btn');
             const originalText = btn.innerHTML;
-            
+
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            // Loading state
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
             btn.disabled = true;
 
@@ -43,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(data.message || 'Login failed');
                 }
 
-                // If account requires OTP verification before logging in
                 if (data.requireOtp) {
                     btn.innerHTML = originalText;
                     btn.disabled = false;
@@ -55,21 +53,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!data.token) {
                     throw new Error('Invalid authentication response from server');
                 }
-                
-                // Store auth data
+
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
 
                 showToast('Welcome back, ' + (data.user.name || 'Student') + '!', 'success');
-                
-                // Handle redirect
+
                 const urlParams = new URLSearchParams(window.location.search);
                 const redirect = urlParams.get('redirect');
-                
+
                 setTimeout(() => {
                     window.location.href = redirect ? decodeURIComponent(redirect) : '/';
                 }, 1000);
-
             } catch (error) {
                 console.error('Login error:', error);
                 showToast(error.message || 'Invalid email or password', 'error');
@@ -79,21 +74,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Register Form Handler
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             const email = document.getElementById('email').value.trim();
-            
+
             if (password !== confirmPassword) {
                 showToast('Passwords do not match', 'error');
                 return;
             }
-            
+
             if (!email || !email.includes('@')) {
                 showToast('Please enter a valid college email address', 'error');
                 return;
@@ -133,21 +127,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
 
-                // If OTP is required to activate account
                 if (data.requireOtp) {
                     showToast('Code sent to ' + email, 'success');
                     showOtpModal(email, data.devOtp);
                     return;
                 }
 
-                // Direct login fallback if OTP disabled
                 if (data.token) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
                     showToast('Account created successfully!', 'success');
-                    setTimeout(() => window.location.href = '/', 1200);
+                    setTimeout(() => { window.location.href = '/'; }, 1200);
                 }
-
             } catch (error) {
                 console.error('Registration error:', error);
                 showToast(error.message || 'Registration failed. Please try again.', 'error');
@@ -156,12 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-});
-
-// ============================================
-// Interactive OTP Verification Modal
-// ============================================
-let resendTimerInterval = null;
+}
 
 function showOtpModal(email, devOtp = null) {
     let modal = document.getElementById('modal-otp-verification');
@@ -206,7 +192,6 @@ function showOtpModal(email, devOtp = null) {
         `;
         document.body.appendChild(modal);
 
-        // Bind Submit
         document.getElementById('btn-submit-otp').addEventListener('click', () => {
             const currentEmail = document.getElementById('otp-modal-email')?.innerText || email;
             submitOtpVerification(currentEmail);
@@ -217,8 +202,6 @@ function showOtpModal(email, devOtp = null) {
                 submitOtpVerification(currentEmail);
             }
         });
-
-        // Bind Resend
         document.getElementById('btn-resend-otp').addEventListener('click', () => {
             const currentEmail = document.getElementById('otp-modal-email')?.innerText || email;
             triggerResendOtp(currentEmail);
@@ -229,7 +212,6 @@ function showOtpModal(email, devOtp = null) {
     const input = document.getElementById('otp-code-input');
     input.value = '';
 
-    // Show dev hint ONLY if returned by backend (hidden when real Brevo email succeeds)
     const hintBox = document.getElementById('otp-dev-hint');
     const hintCode = document.getElementById('otp-dev-code');
     if (devOtp) {
@@ -241,8 +223,6 @@ function showOtpModal(email, devOtp = null) {
 
     modal.classList.add('active');
     setTimeout(() => input.focus(), 300);
-
-    // Start 60s countdown for Resend button
     startResendCountdown();
 }
 
@@ -333,7 +313,6 @@ async function submitOtpVerification(email) {
             throw new Error(data.message || 'Verification failed');
         }
 
-        // Successfully verified!
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
 
@@ -342,14 +321,12 @@ async function submitOtpVerification(email) {
         const modal = document.getElementById('modal-otp-verification');
         modal?.classList.remove('active');
 
-        // Handle redirect
         const urlParams = new URLSearchParams(window.location.search);
         const redirect = urlParams.get('redirect');
 
         setTimeout(() => {
             window.location.href = redirect ? decodeURIComponent(redirect) : '/';
         }, 1200);
-
     } catch (err) {
         console.error('OTP Verification Error:', err);
         showToast(err.message || 'Invalid or expired code', 'error');

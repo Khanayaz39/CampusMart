@@ -39,8 +39,8 @@
 
 | Layer | Technologies Used |
 | :--- | :--- |
-| **Frontend UI** | React 18 (`.jsx` Page Components), Tailwind CSS v3, FontAwesome 6, `esbuild` Bundler |
-| **Frontend Controllers** | Modular Vanilla ES6 Controllers + Socket.IO Client + `jsQR` (UPI QR validation) |
+| **Frontend UI & State** | React 18 (`.jsx` Components & Custom Hooks), Tailwind CSS v3 (Dark/Light Mode), FontAwesome 6, `esbuild` |
+| **Client Integrations** | Socket.IO Client (Real-Time Chat), `jsQR` + `QuickChart` (UPI QR decoding & dynamic amount QR generation) |
 | **Backend Runtime** | Node.js, Express.js (`^4.18.2`) |
 | **Database** | MongoDB, Mongoose ODM (`^7.6.3`) |
 | **Real-Time Engine** | Socket.IO (`^4.7.2`) |
@@ -54,32 +54,36 @@
 
 ```text
 CampusMart/
-├── public/                        # Static assets served by Express
-│   ├── index.html                 # Single-Page Application (SPA) entry shell
+├── public/                        # Compiled production build output served by Express
+│   ├── index.html                 # Single-Page Application (SPA) entry shell (<div id="root">)
 │   ├── css/
 │   │   └── tailwind.css           # Compiled & minified Tailwind CSS bundle
 │   └── js/
-│       ├── bundle/
-│       │   └── react-bundle.js    # Compiled React 18 .jsx page bundle
-│       ├── core/
-│       │   └── common.js          # Shared API client, Auth helpers, Navbar/Footer, Toast UI
-│       └── controllers/           # Page interaction & API controllers
-│           ├── home.js
-│           ├── products.js
-│           ├── product-detail.js
-│           ├── create-listing.js
-│           ├── my-listings.js
-│           ├── favorites.js
-│           ├── offers.js
-│           ├── chat.js
-│           ├── profile.js
-│           ├── auth.js
-│           └── admin.js
-├── src/                           # React 18 + Tailwind CSS source files
-│   ├── main.jsx                   # React 18 root router & mount entry point
+│       └── bundle/
+│           └── react-bundle.js    # Compiled & minified React 18 application bundle
+├── src/                           # React 18 + Tailwind CSS source code
+│   ├── main.jsx                   # React 18 root entry point & synchronous SPA mounter
+│   ├── App.jsx                    # Application router & component registry
 │   ├── styles/
-│   │   └── tailwind.css           # Tailwind directives (@tailwind base/components/utilities)
-│   └── pages/                     # Modular React .jsx views
+│   │   └── tailwind.css           # Tailwind directives & Light/Dark theme CSS variables
+│   ├── components/                # Reusable React UI components
+│   │   ├── layout/
+│   │   │   ├── Navbar.jsx         # Responsive glassmorphic navbar with Dark/Light mode toggle
+│   │   │   └── Footer.jsx         # Campus marketplace footer
+│   │   ├── marketplace/
+│   │   │   └── ProductCard.jsx    # Reusable product listing card
+│   │   └── ui/
+│   │       └── PaginationSlider.jsx
+│   ├── hooks/                     # Custom React hooks for page state & side-effects
+│   │   ├── useProductDetail.js    # Product gallery, offers, reviews & reporting logic
+│   │   ├── useChat.js             # Socket.IO real-time messaging & conversation state
+│   │   ├── useOffers.js           # Buyer/seller offer negotiation & dynamic UPI QR modal
+│   │   ├── useProfile.js          # Profile management, UPI QR decoder & peer ratings
+│   │   └── useAdminDashboard.js   # Admin analytics, user moderation & report resolution
+│   ├── utils/                     # Shared React utilities & helpers
+│   │   ├── common.js              # Theme manager, JWT helpers, favorites & UPI QR parser
+│   │   └── authHelper.js          # Login, 4-campus VIT registration & 6-digit OTP modal
+│   └── pages/                     # Modular React .jsx page views
 │       ├── admin/
 │       │   └── AdminDashboardPage.jsx
 │       ├── auth/

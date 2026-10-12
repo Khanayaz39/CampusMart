@@ -1,5 +1,7 @@
 # CampusMart — AI-Enhanced College Peer-to-Peer Marketplace
 
+🌐 **Live Demo:** [**https://campusmart-t0dq.onrender.com**](https://campusmart-t0dq.onrender.com)
+
 **CampusMart** is a full-stack, AI-powered campus marketplace built exclusively for verified college students (such as `@vitbhopal.ac.in`). Students can buy, sell, negotiate, and trade textbooks, electronics, hostel essentials, cycles, and more within their own campus community with zero platform commission.
 
 ---

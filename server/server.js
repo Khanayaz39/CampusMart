@@ -42,7 +42,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/chat', chatRoutes);
 
-// Health Check Endpoint (used by Render & Uptime monitors to keep server awake 24/7)
+// Health Check Endpoint
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', uptime: Math.round(process.uptime()) });
 });
@@ -75,13 +75,4 @@ const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
-
-  // Automatic 14-minute self-ping on Render so free tier stays awake 24/7
-  const externalUrl = process.env.RENDER_EXTERNAL_URL || process.env.APP_URL;
-  if (externalUrl && externalUrl.startsWith('http')) {
-    const https = require('https');
-    setInterval(() => {
-      https.get(`${externalUrl.replace(/\/$/, '')}/api/health`, () => {}).on('error', () => {});
-    }, 14 * 60 * 1000);
-  }
 });

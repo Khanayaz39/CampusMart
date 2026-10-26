@@ -238,4 +238,3 @@ Open **`http://localhost:5000`** in your browser.
 ## 🌐 Deployment (Render / Cloud)
 - **Build Command**: `npm install && npm run build`
 - **Start Command**: `npm start`
-- **24/7 Keep-Alive**: [`server/server.js`](file:///a:/Local%20Marketplace%20Project/server/server.js#L79-L86) includes an automatic 14-minute self-ping to `/api/health` when `RENDER_EXTERNAL_URL` or `APP_URL` is configured, preventing cold starts on free hosting tiers.

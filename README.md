@@ -231,7 +231,6 @@ Open **`http://localhost:5000`** in your browser.
 | | `/api/admin/users` | `GET` | List all registered students |
 | | `/api/admin/users/:id` | `DELETE` | Remove a user and their listings |
 | | `/api/admin/reports/:id` | `PUT` | Update report status (`resolved`, `dismissed`, `investigating`) |
-| **Health** | `/api/health` | `GET` | Health check endpoint (`200 OK` with server uptime) |
 
 ---
 
